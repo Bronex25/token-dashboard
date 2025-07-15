@@ -1,15 +1,20 @@
-import './App.css'
-import { Button } from './components/ui/button'
-import { NavigationMenu } from './components/ui/navigation-menu'
+import './App.css';
+import React from 'react';
+import { Dashboard } from './components/Dashboard';
+import { Footer } from './components/Footer';
+import { Header } from './components/Header';
 
 function App() {
   return (
     <>
-     <NavigationMenu>
-      <Button variant={'outline'}>click me</Button>
-     </NavigationMenu>
+      <Header></Header>
+      <div className="min-h-screen flex flex-col m-10">
+        <Dashboard></Dashboard>
+      </div>
+
+      <Footer></Footer>
     </>
-  )
+  );
 }
 
-export default App
+export default App;
