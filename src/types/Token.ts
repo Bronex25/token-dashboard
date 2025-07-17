@@ -8,5 +8,5 @@ export interface Token {
   chain: string | undefined;
   balanceFormatted: string;
   usdPrice: string;
-  usdValue: string;
+  usdValue: number;
 }

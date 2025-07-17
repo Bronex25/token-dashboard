@@ -2,7 +2,11 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { useAccount, useBalance } from 'wagmi';
 
-export const PortfolioInfo: React.FC = () => {
+type Props = {
+  totalBalance: string;
+};
+
+export const PortfolioInfo: React.FC<Props> = ({ totalBalance }) => {
   const account = useAccount();
   const balance = useBalance({ address: account.address });
 
@@ -16,7 +20,7 @@ export const PortfolioInfo: React.FC = () => {
         <CardTitle>Portfolio</CardTitle>
       </CardHeader>
       <CardContent className="flex justify-between">
-        <p>$0.00</p>
+        <p>{totalBalance}</p>
         <p>{ethBalance}</p>
       </CardContent>
     </Card>

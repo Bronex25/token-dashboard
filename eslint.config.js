@@ -52,6 +52,7 @@ export default defineConfig([
       ...pluginReact.configs.flat.recommended.rules,
       'react/prop-types': 'off',
       'react/display-name': 'off',
+      'react/react-in-jsx-scope': 'off',
     },
   },
 ]);

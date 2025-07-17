@@ -14,10 +14,12 @@ const supportedChains = [
   EvmChain.BASE,
   EvmChain.OPTIMISM,
   EvmChain.FANTOM,
+  EvmChain.AVALANCHE,
+  EvmChain.POLYGON_AMOY,
 ];
 
 export async function getAllTokens(address: string) {
-  const allTokens: Token[] = [];
+  const allTokens: Token[] | null = [];
 
   for (const chain of supportedChains) {
     try {
@@ -27,23 +29,22 @@ export async function getAllTokens(address: string) {
           chain,
         },
       );
-      const formated = tokenRes.result.map(token => {
-        return {
-          tokenAddress: token.tokenAddress?.lowercase ?? '',
-          name: token.name,
-          symbol: token.symbol,
-          logo: token.logo,
-          thumbnail: token.thumbnail,
-          decimals: token.decimals,
-          chain: chain.name,
-          balanceFormatted:
-            +token.balanceFormatted > 1
-              ? (+token.balanceFormatted).toPrecision(3)
-              : (+token.balanceFormatted).toFixed(8),
-          usdPrice: (+token.usdPrice).toFixed(2),
-          usdValue: (+token.usdValue).toFixed(2),
-        };
-      });
+      const formated = tokenRes.result
+        .filter(token => token.balanceFormatted !== '0' && !token.possibleSpam)
+        .map(token => {
+          return {
+            tokenAddress: token.tokenAddress?.lowercase ?? '',
+            name: token.name,
+            symbol: token.symbol,
+            logo: token.logo,
+            thumbnail: token.thumbnail,
+            decimals: token.decimals,
+            chain: chain.name,
+            balanceFormatted: token.balanceFormatted,
+            usdPrice: token.usdPrice,
+            usdValue: token.usdValue,
+          };
+        });
       allTokens.push(...formated);
     } catch (error) {
       console.error(`Failed on chain ${chain.name}:`, error);
@@ -51,4 +52,12 @@ export async function getAllTokens(address: string) {
   }
 
   return allTokens;
+}
+
+export async function getTransactions(address: string) {
+  try {
+    const transactions = await Moralis.EvmApi.transaction.getWalletTransactions(
+      { address },
+    );
+  } catch (error) {}
 }
