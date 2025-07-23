@@ -1,5 +1,8 @@
 import Moralis from 'moralis';
-import { EvmChain } from '@moralisweb3/common-evm-utils';
+import {
+  EvmChain,
+  EvmWalletHistoryTransaction,
+} from '@moralisweb3/common-evm-utils';
 import type { Token } from '@/types/Token';
 
 Moralis.start({
@@ -27,6 +30,8 @@ export async function getAllTokens(address: string) {
         {
           address,
           chain,
+          excludeSpam: true,
+          excludeUnverifiedContracts: true,
         },
       );
       const formated = tokenRes.result
@@ -54,10 +59,22 @@ export async function getAllTokens(address: string) {
   return allTokens;
 }
 
-export async function getTransactions(address: string) {
-  try {
-    const transactions = await Moralis.EvmApi.transaction.getWalletTransactions(
-      { address },
-    );
-  } catch (error) {}
+export async function getAllTransactions(address: string) {
+  const allTxs: EvmWalletHistoryTransaction[] = [];
+
+  for (const chain of supportedChains) {
+    try {
+      const res = await Moralis.EvmApi.wallets.getWalletHistory({
+        address,
+        chain,
+        order: 'DESC',
+      });
+
+      allTxs.push(...res.result);
+    } catch (err) {
+      console.error(`Failed to fetch transactions on ${chain.name}`, err);
+    }
+  }
+
+  return allTxs;
 }

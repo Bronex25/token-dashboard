@@ -20,7 +20,6 @@ export type TokenData = {
 const headerWithSort = (label: string) => {
   return (context: HeaderContext<TokenData, unknown>) => {
     const sort = context.column.getIsSorted();
-    console.log(sort);
     return (
       <Button
         variant="ghost"

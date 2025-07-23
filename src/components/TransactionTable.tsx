@@ -1,19 +1,21 @@
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { DataTable } from './ui/Tables/DataTable';
+import type { EvmWalletHistoryTransaction } from '@moralisweb3/common-evm-utils';
+import { columns } from './ui/Tables/transactionColumns';
 
-export function TransactionsTable() {
+type Props = {
+  transactions: EvmWalletHistoryTransaction[];
+};
+
+export const TransactionTable: React.FC<Props> = ({ transactions }) => {
   return (
     <Card>
       <CardHeader>
         <CardTitle>Recent Transactions</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-3 gap-4 text-sm text-muted-foreground mb-2">
-          <div>Hash</div>
-          <div>Type</div>
-          <div>Age</div>
-        </div>
-        {/* Map actual transactions here */}
+        <DataTable columns={columns} data={transactions} />
       </CardContent>
     </Card>
   );
-}
+};
