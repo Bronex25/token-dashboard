@@ -7,12 +7,19 @@ export function cn(...inputs: ClassValue[]) {
 
 export function formatToUsd(data: string) {
   const value = parseFloat(data);
-  const formatted = new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-  }).format(value);
+  if (value >= 0.1) {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+    }).format(value);
+  }
 
-  return formatted;
+  if (value >= 0.01) {
+    return `$${value.toFixed(4)}`;
+  }
+  const parts = value.toExponential().split('e-');
+  const digits = parseInt(parts[1], 10) + 2; // show 2 significant digits after leading zeros
+  return `$${value.toFixed(digits)}`;
 }
 
 export function formatTokenBalance(raw: string): string {

@@ -40,7 +40,8 @@ export async function getAllTokens(address: string) {
           return {
             tokenAddress: token.tokenAddress?.lowercase ?? '',
             name: token.name,
-            symbol: token.symbol,
+            symbol:
+              token.symbol === 'USDT' ? `USDT (${chain.name})` : token.symbol,
             logo: token.logo,
             thumbnail: token.thumbnail,
             decimals: token.decimals,
@@ -77,4 +78,13 @@ export async function getAllTransactions(address: string) {
   }
 
   return allTxs;
+}
+
+export async function getAcountNetWorth(address: string) {
+  const res = await Moralis.EvmApi.wallets.getWalletNetWorth({
+    address,
+    excludeSpam: true,
+    excludeUnverifiedContracts: true,
+  });
+  return res.result.totalNetworthUsd;
 }

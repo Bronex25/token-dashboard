@@ -8,6 +8,7 @@ import App from './App.tsx';
 import '@rainbow-me/rainbowkit/styles.css';
 import { ThemeProvider } from './components/ui/themeProvider.tsx';
 import { RainbowKitWrapper } from './components/RainbowKitProvider.tsx';
+import { BrowserRouter } from 'react-router-dom';
 
 const queryClient = new QueryClient();
 
@@ -16,9 +17,11 @@ createRoot(document.getElementById('root')!).render(
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
         <RainbowKitWrapper>
-          <StrictMode>
-            <App />
-          </StrictMode>
+          <BrowserRouter basename={import.meta.env.BASE_URL}>
+            <StrictMode>
+              <App />
+            </StrictMode>
+          </BrowserRouter>
         </RainbowKitWrapper>
       </ThemeProvider>
     </QueryClientProvider>

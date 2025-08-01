@@ -46,7 +46,7 @@ const formattedCurrencyCell = (key: string) => {
   };
 };
 
-export const columns: ColumnDef<TokenData>[] = [
+export const tokenColumns: ColumnDef<TokenData>[] = [
   {
     accessorKey: 'symbol',
     header: headerWithSort('Symbol'),
