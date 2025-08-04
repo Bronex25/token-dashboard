@@ -1,5 +1,6 @@
 import { Card } from '@/components/Card';
 import { HomeTokensTable } from '@/components/HomeTokenstable';
+import { NewsCard } from '@/components/NewsCard';
 import { SkeletonCard } from '@/components/SkeletonCard';
 import { SmTokenCard } from '@/components/SmTokenCard';
 import { TrendingIcon } from '@/components/TrendingIcon';
@@ -10,8 +11,10 @@ import {
   getTokens,
   getTrendingTokens,
 } from '@/lib/fetchCoinGecko';
+import { getNews } from '@/lib/fetchNewsData';
 import { formatToUsd } from '@/lib/utils';
 import type { GlobalCryptoData } from '@/types/GlobalMarketData';
+import type { NewsArticle } from '@/types/NewsArticle';
 import type { TokenCoinGecko } from '@/types/TokenCoinGecko';
 import type { TrendingCoin } from '@/types/TrendingCoin';
 import { useEffect, useState } from 'react';
@@ -21,19 +24,22 @@ export const Home: React.FC = () => {
   const [globalMarketData, setGlobalMarketData] =
     useState<GlobalCryptoData | null>(null);
   const [trending, setTrending] = useState<TrendingCoin[] | null>(null);
+  const [news, setNews] = useState<NewsArticle[] | null>(null);
 
   useEffect(() => {
     const fetchAllData = async () => {
       try {
-        const [tokens, globalData, trendingTokens] = await Promise.all([
+        const [tokens, globalData, trendingTokens, news] = await Promise.all([
           getTokens(),
           getGlobalMarketData(),
           getTrendingTokens(),
+          getNews(),
         ]);
 
         setTokens(tokens);
         setGlobalMarketData(globalData);
         setTrending(trendingTokens);
+        setNews(news);
       } catch (error) {
         console.error('Error fetching data:', error);
       }
@@ -70,9 +76,25 @@ export const Home: React.FC = () => {
 
   return (
     <div className="container flex flex-col gap-15">
-      <h1 className="text-4xl text-center mt-6">
-        Cryptocurrency Market Overview
-      </h1>
+      <div className="flex flex-col items-center gap-4">
+        <h1 className="text-4xl text-center mt-6">
+          Cryptocurrency Market Overview
+        </h1>
+        <div className="flex items-center gap-2">
+          <span>
+            The global cryptocurrency market cap today is{' '}
+            {formatToUsd(
+              globalMarketData.data.total_market_cap.usd.toString(),
+              true,
+            )}
+            , a
+          </span>
+          <TrendingIcon
+            data={globalMarketData.data.market_cap_change_percentage_24h_usd}
+          />
+          <span>change in the last 24 hours.</span>
+        </div>
+      </div>
 
       <section className="grid grid-cols-5 grid-rows-2 gap-2">
         <Card
@@ -158,6 +180,29 @@ export const Home: React.FC = () => {
           data={tokens.slice(0, 10)}
           columns={tokenColumns}
         ></HomeTokensTable>
+      </section>
+
+      <section>
+        <h1 className="text-2xl font-medium mb-10 text-center">
+          Last Crypto News
+        </h1>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 ">
+          {news ? (
+            news.map(article => (
+              <NewsCard
+                key={article.article_id}
+                title={article.title}
+                imageUrl={article.image_url}
+                author={article.creator[0]}
+                publishedAt={article.pubDate}
+                tokenRelated={article.ai_tag?.[0]}
+                url={article.link}
+              />
+            ))
+          ) : (
+            <p>Loading news...</p>
+          )}
+        </div>
       </section>
     </div>
   );

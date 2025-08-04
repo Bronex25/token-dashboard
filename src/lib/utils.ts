@@ -5,26 +5,33 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export function formatToUsd(data: string) {
+export function formatToUsd(data: string, compact = false): string {
   const value = parseFloat(data);
-  if (value >= 0.1) {
+  if (value >= 10000) {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      notation: compact ? 'compact' : 'standard',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: compact ? 2 : 0,
+    }).format(value);
+  } else if (value >= 0.1 && value < 10000) {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
       currency: 'USD',
     }).format(value);
-  }
-
-  if (value >= 0.01) {
+  } else if (value >= 0.01 && value < 0.1) {
     return `$${value.toFixed(4)}`;
   }
+
   const parts = value.toExponential().split('e-');
-  const digits = parseInt(parts[1], 10) + 2; // show 2 significant digits after leading zeros
+  const digits = parseInt(parts[1], 10) + 2;
   return `$${value.toFixed(digits)}`;
 }
 
 export function formatTokenBalance(raw: string): string {
   const num = parseFloat(raw);
   if (num === 0) return '0';
-  if (num > 1) return num.toFixed(3).replace(/\.?0+$/, ''); // Trim trailing 0s
+  if (num > 1) return num.toFixed(3).replace(/\.?0+$/, '');
   return num.toFixed(6).replace(/\.?0+$/, '');
 }

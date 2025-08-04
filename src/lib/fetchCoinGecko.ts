@@ -49,7 +49,6 @@ export async function getTopGainers(
 export async function getTrendingTokens(): Promise<TrendingCoin[]> {
   const res = await fetchCoinGecko<responseTranding>('search/trending');
 
-  console.log('Trending Tokens:', res.coins);
   return res.coins.slice(0, 5);
 }
 

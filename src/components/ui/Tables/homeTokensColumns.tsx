@@ -21,7 +21,7 @@ const headerWithSort = (label: string) => {
         onClick={() =>
           context.column.toggleSorting(context.column.getIsSorted() === 'asc')
         }
-        className=" font-semibold text-left"
+        className=" font-semibold has-[>svg]:px-0 "
       >
         {label}
         {sort === false && <ArrowUpDown />}
@@ -56,17 +56,20 @@ export const tokenColumns: ColumnDef<TokenCoinGecko>[] = [
   },
   {
     accessorKey: 'name',
-    header: headerWithSort('Name'),
+    header: headerWithSort('Coin'),
     cell: ({ row }) => {
       const logo = row.original.image;
       return (
-        <div className="font-medium flex items-center gap-1">
+        <div className="font-medium flex items-center gap-2">
           <img
             src={logo || 'public/tokenFallback.svg'}
             alt="Token img"
-            className="w-5 h-5"
+            className="w-7 h-7"
           />
           {row.getValue('name')}
+          <span className="text-gray-400 text-xs">
+            {row.original.symbol.toUpperCase()}
+          </span>
         </div>
       );
     },
@@ -96,17 +99,17 @@ export const tokenColumns: ColumnDef<TokenCoinGecko>[] = [
   },
   {
     accessorKey: 'fully_diluted_valuation',
-    header: 'FDV',
+    header: headerWithSort('FDV'),
     cell: formattedCurrencyCell('fully_diluted_valuation'),
   },
   {
     accessorKey: 'ath',
-    header: 'ATH',
+    header: headerWithSort('ATH'),
     cell: formattedCurrencyCell('ath'),
   },
   {
     accessorKey: 'sparkline_in_7d',
-    header: 'Last 7d',
+    header: () => <p>Last 7d Chart</p>,
     cell: ({ row }) => {
       const sparkline = row.getValue('sparkline_in_7d') as
         | { price: number[] }
