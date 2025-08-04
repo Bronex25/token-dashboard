@@ -1,42 +1,36 @@
 import { Card } from '@/components/Card';
-import { HomeTokensTable } from '@/components/HomeTokenstable';
+import { HomeTokensTable } from '@/components/HomeTokenTable';
 import { NewsCard } from '@/components/NewsCard';
 import { SkeletonCard } from '@/components/SkeletonCard';
 import { SmTokenCard } from '@/components/SmTokenCard';
 import { TrendingIcon } from '@/components/TrendingIcon';
 import { tokenColumns } from '@/components/ui/Tables/HomeTokensColumns';
+import { useTokens } from '@/context/TokenContext';
 
-import {
-  getGlobalMarketData,
-  getTokens,
-  getTrendingTokens,
-} from '@/lib/fetchCoinGecko';
+import { getGlobalMarketData, getTrendingTokens } from '@/lib/fetchCoinGecko';
 import { getNews } from '@/lib/fetchNewsData';
 import { formatToUsd } from '@/lib/utils';
 import type { GlobalCryptoData } from '@/types/GlobalMarketData';
 import type { NewsArticle } from '@/types/NewsArticle';
-import type { TokenCoinGecko } from '@/types/TokenCoinGecko';
 import type { TrendingCoin } from '@/types/TrendingCoin';
 import { useEffect, useState } from 'react';
 
 export const Home: React.FC = () => {
-  const [tokens, setTokens] = useState<TokenCoinGecko[] | null>(null);
   const [globalMarketData, setGlobalMarketData] =
     useState<GlobalCryptoData | null>(null);
   const [trending, setTrending] = useState<TrendingCoin[] | null>(null);
   const [news, setNews] = useState<NewsArticle[] | null>(null);
 
+  const { tokens, isLoading, error } = useTokens();
+
   useEffect(() => {
     const fetchAllData = async () => {
       try {
-        const [tokens, globalData, trendingTokens, news] = await Promise.all([
-          getTokens(),
+        const [globalData, trendingTokens, news] = await Promise.all([
           getGlobalMarketData(),
           getTrendingTokens(),
           getNews(),
         ]);
-
-        setTokens(tokens);
         setGlobalMarketData(globalData);
         setTrending(trendingTokens);
         setNews(news);
@@ -48,7 +42,7 @@ export const Home: React.FC = () => {
     fetchAllData();
   }, []);
 
-  if (!tokens || !globalMarketData || !trending) {
+  if (isLoading || !tokens || !globalMarketData || !trending) {
     return (
       <div className="container py-6 space-y-8">
         <div className="grid grid-cols-5 grid-rows-2 gap-2">
@@ -67,7 +61,8 @@ export const Home: React.FC = () => {
         </section>
       </div>
     );
-  }
+  } else if (error) return <div>Error occured</div>;
+
   const gainers = [...tokens]
     .sort(
       (a, b) => b.price_change_percentage_24h - a.price_change_percentage_24h,

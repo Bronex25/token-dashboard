@@ -1,16 +1,36 @@
-import React from 'react';
+import { CoinCard } from '@/components/CoinCard';
+import { Input } from '@/components/ui/input';
+import { useTokens } from '@/context/TokenContext';
+import React, { useState } from 'react';
 
 export const Cryptocurrencies: React.FC = () => {
+  const { tokens } = useTokens();
+  const [query, setQuery] = useState('');
+
+  const queriedTokens = tokens?.filter(token => {
+    const formattedQuery = query.trim().toLowerCase();
+
+    return (
+      token.name.toLowerCase().includes(formattedQuery) ||
+      token.symbol.includes(formattedQuery)
+    );
+  });
+
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-2xl font-bold mb-6">Cryptocurrencies</h1>
-      <p className="text-gray-700 mb-4">
-        Explore the latest trends and prices in the cryptocurrency market.
-      </p>
-      {/* Placeholder for future content */}
-      <div className="bg-white p-6 rounded-lg shadow-md">
-        <p className="text-gray-600">Content coming soon...</p>
+    <div className="container mx-auto px-4 py-8 flex flex-col gap-10 items-center">
+      <Input
+        type="search"
+        placeholder="Type to search"
+        value={query}
+        onChange={e => setQuery(e.target.value)}
+        className="max-w-1/2"
+      ></Input>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 w-full ">
+        {queriedTokens?.map(token => (
+          <CoinCard key={token.id} coin={token} />
+        ))}
       </div>
+      <div></div>
     </div>
   );
 };

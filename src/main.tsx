@@ -9,6 +9,7 @@ import '@rainbow-me/rainbowkit/styles.css';
 import { ThemeProvider } from './components/ui/themeProvider.tsx';
 import { RainbowKitWrapper } from './components/RainbowKitProvider.tsx';
 import { BrowserRouter } from 'react-router-dom';
+import { TokensProvider } from './context/TokenContext.tsx';
 
 const queryClient = new QueryClient();
 
@@ -16,13 +17,15 @@ createRoot(document.getElementById('root')!).render(
   <WagmiProvider config={config}>
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
-        <RainbowKitWrapper>
-          <BrowserRouter basename={import.meta.env.BASE_URL}>
-            <StrictMode>
-              <App />
-            </StrictMode>
-          </BrowserRouter>
-        </RainbowKitWrapper>
+        <TokensProvider>
+          <RainbowKitWrapper>
+            <BrowserRouter basename={import.meta.env.BASE_URL}>
+              <StrictMode>
+                <App />
+              </StrictMode>
+            </BrowserRouter>
+          </RainbowKitWrapper>
+        </TokensProvider>
       </ThemeProvider>
     </QueryClientProvider>
   </WagmiProvider>,

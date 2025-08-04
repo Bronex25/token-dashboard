@@ -8,6 +8,7 @@ import {
 } from '@/components/ui/tooltip';
 import { LineChart, Line, ResponsiveContainer } from 'recharts';
 import { TrendingIcon } from './TrendingIcon';
+import { formatToUsd } from '@/lib/utils';
 
 type CoinCardProps = {
   coin: {
@@ -65,8 +66,12 @@ export function CoinCard({ coin }: CoinCardProps) {
 
           <TrendingIcon data={coin.price_change_percentage_24h}></TrendingIcon>
         </div>
-        <span>{coin.market_cap}</span>
-        <span>{coin.total_volume}</span>
+        <p className="text-sm font-semibold">
+          Market Cap <span>{formatToUsd(coin.market_cap.toString())}</span>
+        </p>
+        <p className="text-sm font-semibold">
+          Total Volume <span>{formatToUsd(coin.total_volume.toString())}</span>
+        </p>
         <ResponsiveContainer width="100%" height={60}>
           <LineChart
             data={coin.sparkline_in_7d.price.map((value, index) => ({
@@ -80,6 +85,7 @@ export function CoinCard({ coin }: CoinCardProps) {
               stroke={trendColor}
               strokeWidth={2}
               dot={false}
+              isAnimationActive={false}
             />
           </LineChart>
         </ResponsiveContainer>

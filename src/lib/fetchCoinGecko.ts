@@ -28,7 +28,7 @@ export async function getTokens(page: string = '1'): Promise<TokenCoinGecko[]> {
   return fetchCoinGecko<TokenCoinGecko[]>('coins/markets', {
     vs_currency: 'usd',
     order: 'market_cap_desc',
-    per_page: '100',
+    per_page: '200',
     page: page,
     sparkline: 'true',
   });
