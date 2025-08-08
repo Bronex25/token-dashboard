@@ -5,6 +5,28 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+export const fetchWithCache = async <T>(
+  key: string,
+  fetchFn: () => Promise<T>,
+  cacheDuration = 5 * 60 * 1000, // default: 5 minutes
+): Promise<T> => {
+  const cached = localStorage.getItem(key);
+
+  if (cached) {
+    const { data, timestamp } = JSON.parse(cached);
+    if (Date.now() - timestamp < cacheDuration) {
+      return data;
+    }
+  }
+
+  const freshData = await fetchFn();
+  localStorage.setItem(
+    key,
+    JSON.stringify({ data: freshData, timestamp: Date.now() }),
+  );
+  return freshData;
+};
+
 export function formatToUsd(data: string, compact = false): string {
   const value = parseFloat(data);
   if (value >= 10000) {

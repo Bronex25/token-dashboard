@@ -11,6 +11,7 @@ import { formatToUsd } from '@/lib/utils';
 import type { TokenCoinGecko } from '@/types/TokenCoinGecko';
 import { TrendingIcon } from '@/components/TrendingIcon';
 import { Line, LineChart, ResponsiveContainer, YAxis } from 'recharts';
+import { Link } from 'react-router-dom';
 
 const headerWithSort = (label: string) => {
   return (context: HeaderContext<TokenCoinGecko, unknown>) => {
@@ -21,7 +22,7 @@ const headerWithSort = (label: string) => {
         onClick={() =>
           context.column.toggleSorting(context.column.getIsSorted() === 'asc')
         }
-        className=" font-semibold has-[>svg]:px-0 "
+        className=" font-semibold has-[>svg]:px-0 cursor-pointer"
       >
         {label}
         {sort === false && <ArrowUpDown />}
@@ -59,8 +60,13 @@ export const tokenColumns: ColumnDef<TokenCoinGecko>[] = [
     header: headerWithSort('Coin'),
     cell: ({ row }) => {
       const logo = row.original.image;
+      const id = row.original.id;
+
       return (
-        <div className="font-medium flex items-center gap-2">
+        <Link
+          to={`/cryptocurrencies/${id}`}
+          className="font-medium flex items-center gap-2"
+        >
           <img
             src={logo || 'public/tokenFallback.svg'}
             alt="Token img"
@@ -70,7 +76,7 @@ export const tokenColumns: ColumnDef<TokenCoinGecko>[] = [
           <span className="text-gray-400 text-xs">
             {row.original.symbol.toUpperCase()}
           </span>
-        </div>
+        </Link>
       );
     },
   },

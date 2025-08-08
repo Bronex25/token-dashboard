@@ -6,10 +6,11 @@ import { SmTokenCard } from '@/components/SmTokenCard';
 import { TrendingIcon } from '@/components/TrendingIcon';
 import { tokenColumns } from '@/components/ui/Tables/HomeTokensColumns';
 import { useTokens } from '@/context/TokenContext';
+import { useMemo } from 'react';
 
 import { getGlobalMarketData, getTrendingTokens } from '@/lib/fetchCoinGecko';
 import { getNews } from '@/lib/fetchNewsData';
-import { formatToUsd } from '@/lib/utils';
+import { fetchWithCache, formatToUsd } from '@/lib/utils';
 import type { GlobalCryptoData } from '@/types/GlobalMarketData';
 import type { NewsArticle } from '@/types/NewsArticle';
 import type { TrendingCoin } from '@/types/TrendingCoin';
@@ -18,8 +19,8 @@ import { useEffect, useState } from 'react';
 export const Home: React.FC = () => {
   const [globalMarketData, setGlobalMarketData] =
     useState<GlobalCryptoData | null>(null);
-  const [trending, setTrending] = useState<TrendingCoin[] | null>(null);
-  const [news, setNews] = useState<NewsArticle[] | null>(null);
+  const [trending, setTrending] = useState<TrendingCoin[]>([]);
+  const [news, setNews] = useState<NewsArticle[]>([]);
 
   const { tokens, isLoading, error } = useTokens();
 
@@ -27,9 +28,9 @@ export const Home: React.FC = () => {
     const fetchAllData = async () => {
       try {
         const [globalData, trendingTokens, news] = await Promise.all([
-          getGlobalMarketData(),
-          getTrendingTokens(),
-          getNews(),
+          fetchWithCache('globalData', getGlobalMarketData),
+          fetchWithCache('trendingToken', getTrendingTokens),
+          fetchWithCache('news', getNews),
         ]);
         setGlobalMarketData(globalData);
         setTrending(trendingTokens);
@@ -42,7 +43,27 @@ export const Home: React.FC = () => {
     fetchAllData();
   }, []);
 
-  if (isLoading || !tokens || !globalMarketData || !trending) {
+  const gainers = useMemo(
+    () =>
+      [...(tokens || [])]
+        .sort(
+          (a, b) =>
+            b.price_change_percentage_24h - a.price_change_percentage_24h,
+        )
+        .slice(0, 5),
+    [tokens],
+  );
+
+  const topTenTokens = useMemo(
+    () => (tokens ? tokens.slice(0, 10) : []),
+    [tokens],
+  );
+
+  const isDataLoading = isLoading || !tokens || !globalMarketData || !trending;
+
+  if (error) return <div>Error occurred: {String(error)}</div>;
+
+  if (isDataLoading) {
     return (
       <div className="container py-6 space-y-8">
         <div className="grid grid-cols-5 grid-rows-2 gap-2">
@@ -61,13 +82,7 @@ export const Home: React.FC = () => {
         </section>
       </div>
     );
-  } else if (error) return <div>Error occured</div>;
-
-  const gainers = [...tokens]
-    .sort(
-      (a, b) => b.price_change_percentage_24h - a.price_change_percentage_24h,
-    )
-    .slice(0, 5);
+  }
 
   return (
     <div className="container flex flex-col gap-15">
@@ -102,7 +117,9 @@ export const Home: React.FC = () => {
           contentClassName="p-0"
         >
           <div className="flex items-center gap-2">
-            <p className="text-gray-500 font-medium text-sm">Market Cap</p>
+            <p className="text-gray-500 font-medium text-sm dark:text-gray-400">
+              Market Cap
+            </p>
             <TrendingIcon
               data={globalMarketData.data.market_cap_change_percentage_24h_usd}
             ></TrendingIcon>
@@ -116,44 +133,42 @@ export const Home: React.FC = () => {
           titleClassName="text-lg font-semibold "
           contentClassName="p-0"
         >
-          <p className="text-gray-500 font-medium text-sm">
+          <p className="text-gray-500 font-medium text-sm dark:text-gray-400">
             24h Trading Volume
           </p>
         </Card>
 
         <Card
           title="🔥 Trending"
-          cardClassName="col-start-2 row-span-2 col-span-2 p-4 justify-between gap-2"
+          cardClassName="col-start-2 row-span-2 col-span-2 p-4 justify-between gap-0"
           headerClassName="px-0"
-          contentClassName="flex flex-col gap-2 px-0"
+          contentClassName="flex flex-col gap-0 px-0"
           titleClassName="text-lg font-semibold"
         >
-          {trending ? (
-            trending.map(token => (
-              <SmTokenCard
-                name={token.item.name}
-                image={token.item.small}
-                current_price={token.item.data.price}
-                price_change_percentage_24h={
-                  token.item.data.price_change_percentage_24h.usd
-                }
-                key={token.item.id}
-              />
-            ))
-          ) : (
-            <p>Loading top gainers...</p>
-          )}
+          {trending.map(token => (
+            <SmTokenCard
+              id={token.item.id}
+              name={token.item.name}
+              image={token.item.small}
+              current_price={token.item.data.price}
+              price_change_percentage_24h={
+                token.item.data.price_change_percentage_24h.usd
+              }
+              key={token.item.id}
+            />
+          ))}
         </Card>
         <Card
           title="🚀 Top Gainers"
-          cardClassName="col-start-4 row-span-2 col-span-2 gap-2 p-4 justify-between"
+          cardClassName="col-start-4 row-span-2 col-span-2 gap-0 p-4 justify-between"
           headerClassName="px-0"
-          contentClassName="flex flex-col gap-2 px-0"
+          contentClassName="flex flex-col gap-0 px-0"
           titleClassName="text-lg font-semibold"
         >
-          {gainers ? (
+          {gainers.length > 0 ? (
             gainers.map(token => (
               <SmTokenCard
+                id={token.id}
                 name={token.name}
                 image={token.image}
                 current_price={token.current_price}
@@ -172,7 +187,7 @@ export const Home: React.FC = () => {
           Top 10 Cryptocurrencies{' '}
         </h1>
         <HomeTokensTable
-          data={tokens.slice(0, 10)}
+          data={topTenTokens}
           columns={tokenColumns}
         ></HomeTokensTable>
       </section>
@@ -182,15 +197,18 @@ export const Home: React.FC = () => {
           Last Crypto News
         </h1>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 ">
-          {news ? (
+          {news.length > 0 ? (
             news.map(article => (
               <NewsCard
-                key={article.article_id}
                 title={article.title}
+                key={article.article_id}
+                author={
+                  article.creator && article.creator.length > 0
+                    ? article.creator[0]
+                    : 'Unknown'
+                }
                 imageUrl={article.image_url}
-                author={article.creator[0]}
                 publishedAt={article.pubDate}
-                tokenRelated={article.ai_tag?.[0]}
                 url={article.link}
               />
             ))

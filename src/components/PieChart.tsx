@@ -1,15 +1,7 @@
 'use client';
-
-import { TrendingUp } from 'lucide-react';
 import { LabelList, Pie, PieChart } from 'recharts';
 
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   type ChartConfig,
   ChartContainer,
@@ -34,14 +26,14 @@ type Props = {
 
 export const ChartPieLabelList: React.FC<Props> = ({ data }) => {
   return (
-    <Card className="flex flex-col">
+    <Card className="flex flex-col max-h-fit">
       <CardHeader className="items-center pb-0">
         <CardTitle>Wallet Overview</CardTitle>
       </CardHeader>
       <CardContent className="flex-1 pb-0">
         <ChartContainer
           config={chartConfig}
-          className="mx-auto aspect-square max-h-[250px] [&_.recharts-text]:fill-muted dark:[&_.recharts-text]:fill-white"
+          className=" max-h-full w-full [&_.recharts-text]:fill-muted dark:[&_.recharts-text]:fill-white"
         >
           <PieChart>
             <ChartTooltip
@@ -50,7 +42,7 @@ export const ChartPieLabelList: React.FC<Props> = ({ data }) => {
                 const data = payload[0].payload;
                 const total = data.value;
                 return (
-                  <div className="rounded-lg bg-background p-2 shadow-md border">
+                  <div className="rounded-lg bg-white p-2 shadow-md border dark:bg-black ">
                     <p className="text-sm font-medium">{data.name}</p>
                     <p className="text-sm text-muted-foreground">
                       {`${formatToUsd(String(total))}`}
@@ -79,14 +71,6 @@ export const ChartPieLabelList: React.FC<Props> = ({ data }) => {
           </PieChart>
         </ChartContainer>
       </CardContent>
-      <CardFooter className="flex-col gap-2 text-sm">
-        <div className="flex items-center gap-2 leading-none font-medium">
-          Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
-        </div>
-        <div className="text-muted-foreground leading-none">
-          Showing total visitors for the last 6 months
-        </div>
-      </CardFooter>
     </Card>
   );
 };

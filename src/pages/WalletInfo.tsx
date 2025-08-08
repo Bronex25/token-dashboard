@@ -1,10 +1,13 @@
 import { ChartPieLabelList } from '@/components/PieChart';
+import { SkeletonCard } from '@/components/SkeletonCard';
 import { DataTable } from '@/components/ui/Tables/DataTable';
 import { tokenColumns } from '@/components/ui/Tables/tokenColumns';
 import { columns } from '@/components/ui/Tables/transactionColumns';
 import { getAllTokens, getAllTransactions } from '@/lib/moralis';
+import { fetchWithCache } from '@/lib/utils';
 import type { Token } from '@/types/Token';
 import type { EvmWalletHistoryTransaction } from '@moralisweb3/common-evm-utils';
+import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { useEffect, useState } from 'react';
 import { useAccount } from 'wagmi';
 
@@ -14,6 +17,8 @@ export const WalletInfo: React.FC = () => {
   const [transactions, setTransactions] = useState<
     EvmWalletHistoryTransaction[]
   >([]);
+  const [isLoading, setIsLoading] = useState(false);
+
   const tokensData = [...tokens].map(token => {
     return {
       symbol: token.symbol,
@@ -27,15 +32,22 @@ export const WalletInfo: React.FC = () => {
   useEffect(() => {
     const fetchTokensTxs = async () => {
       if (!account.address) return;
+      const address = account.address;
+      setIsLoading(true);
       try {
-        const tokens = await getAllTokens(account.address);
-        const transactions = await getAllTransactions(account.address);
+        const tokens = await fetchWithCache('tokens', () =>
+          getAllTokens(address),
+        );
+        const transactions = await fetchWithCache('transactions', () =>
+          getAllTransactions(address),
+        );
 
         setTokens(tokens);
         setTransactions(transactions);
-        console.log(transactions);
       } catch (error) {
         console.error('Unable to get tokens', error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -53,16 +65,6 @@ export const WalletInfo: React.FC = () => {
     '#fa8072',
     '#b0e0d0',
     '#f08080',
-    '#e9967a',
-    '#c0c0c0',
-    '#bdb76b',
-    '#dda0dd',
-    '#ffb6c1',
-    '#20b2aa',
-    '#87cefa',
-    '#4682b4',
-    '#ff6347',
-    '#40e0d0',
   ];
 
   const sortedTokens = [...tokens].sort((a, b) => +b.usdValue - +a.usdValue);
@@ -90,25 +92,47 @@ export const WalletInfo: React.FC = () => {
       : []),
   ];
 
+  if (!account.address) {
+    return (
+      <div>
+        <ConnectButton />
+      </div>
+    );
+  }
+
+  if (isLoading) {
+    return (
+      <main className="px-4 py-8 space-y-8 w-full">
+        <SkeletonCard></SkeletonCard>
+        <SkeletonCard></SkeletonCard>
+        <SkeletonCard></SkeletonCard>
+        <SkeletonCard></SkeletonCard>
+      </main>
+    );
+  }
+
   return (
-    <main className="px-4 py-8 space-y-8">
-      <section>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <section>
-            <h1 className="text-3xl font-bold mb-4">Wallet Overview</h1>
-            <ChartPieLabelList data={dataForPieChart}></ChartPieLabelList>
+    <div className="flex flex-col gap-15 w-full">
+      <h1 className="text-4xl font-bold text-center mt-10">
+        Wallet Information
+      </h1>
+      <section className="space-y-20">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 min-w-full">
+          <section className="col-span-1">
+            <h2 className="text-2xl font-bold mb-4">Wallet Overview</h2>
+            <ChartPieLabelList data={dataForPieChart} />
           </section>
-          <section>
-            <h2 className="text-2xl font-semibold mb-4">Token Balances</h2>
-            <DataTable columns={tokenColumns} data={tokensData}></DataTable>
+          <section className="col-span-1">
+            <h2 className="text-2xl font-bold mb-4">Token Balances</h2>
+            <DataTable columns={tokenColumns} data={tokensData} />
           </section>
         </div>
-      </section>
 
-      <section>
-        <h2 className="text-2xl font-semibold mb-4">Transaction History</h2>
-        <DataTable columns={columns} data={transactions} />
+        <section>
+          <h2 className="text-2xl font-semibold mb-4">Transaction History</h2>
+          <DataTable columns={columns} data={transactions} />
+        </section>
       </section>
-    </main>
+    </div>
   );
 };

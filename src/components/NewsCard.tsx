@@ -6,7 +6,6 @@ type NewsCardProps = {
   imageUrl?: string;
   author?: string;
   publishedAt: string;
-  tokenRelated?: string;
   url: string;
 };
 
@@ -27,10 +26,15 @@ export const NewsCard: React.FC<NewsCardProps> = ({
 
   return (
     <a href={url} target="_blank" rel="noopener noreferrer">
-      <Card className="flex flex-col overflow-hidden hover:shadow-lg transition duration-200 h-full">
+      <Card
+        className="flex flex-col overflow-hidden h-full transition duration-200
+          hover:shadow-lg hover:scale-105
+          dark:hover:scale-105 dark:hover:shadow-[0_4px_24px_0_rgba(80,180,255,0.25)]"
+      >
         <img
           src={imageUrl || FALLBACK_IMAGE}
           alt={title}
+          onError={e => (e.currentTarget.src = FALLBACK_IMAGE)}
           className="w-full h-40 object-cover"
         />
         <CardHeader className="pb-2 px-4 pt-3">

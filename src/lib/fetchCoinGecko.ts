@@ -1,4 +1,6 @@
+import type { MarketChartData } from '@/types/MarketChartData';
 import type { GlobalCryptoData } from '@/types/GlobalMarketData';
+import type { TokenById } from '@/types/TokenById';
 import type { TokenCoinGecko } from '@/types/TokenCoinGecko';
 import type { TrendingCoin } from '@/types/TrendingCoin';
 
@@ -54,4 +56,24 @@ export async function getTrendingTokens(): Promise<TrendingCoin[]> {
 
 export async function getGlobalMarketData(): Promise<GlobalCryptoData> {
   return fetchCoinGecko('global');
+}
+
+export async function getTokenById(tokenId: string): Promise<TokenById> {
+  const res = await fetchCoinGecko<TokenById>(
+    `coins/${tokenId}?tickers=false&community_data=false&developer_data=false&dex_pair_format=symbol`,
+  );
+  console.log(res);
+  return res;
+}
+
+export async function getMarketChart(
+  tokenId: string,
+  days: string = '7',
+  interval: string = 'daily',
+): Promise<MarketChartData> {
+  return fetchCoinGecko<MarketChartData>(`coins/${tokenId}/market_chart`, {
+    vs_currency: 'usd',
+    days,
+    interval,
+  });
 }

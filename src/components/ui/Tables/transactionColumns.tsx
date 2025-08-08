@@ -39,7 +39,10 @@ export const columns: ColumnDef<EvmWalletHistoryTransaction>[] = [
   {
     header: 'From',
     cell: ({ row }) => {
-      const from = row.original.fromAddress.lowercase;
+      const from =
+        typeof row.original.fromAddress === 'string'
+          ? row.original.fromAddress
+          : row.original.fromAddress?.lowercase;
       return (
         <div className="flex gap-2">
           <a
@@ -57,7 +60,10 @@ export const columns: ColumnDef<EvmWalletHistoryTransaction>[] = [
   {
     header: 'To',
     cell: ({ row }) => {
-      const to = row.original.toAddress?.lowercase;
+      const to =
+        typeof row.original.toAddress === 'string'
+          ? row.original.toAddress
+          : row.original.toAddress?.lowercase;
       return to ? `${to.slice(0, 6)}...${to.slice(-4)}` : '-';
     },
   },
