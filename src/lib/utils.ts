@@ -8,7 +8,7 @@ export function cn(...inputs: ClassValue[]) {
 export const fetchWithCache = async <T>(
   key: string,
   fetchFn: () => Promise<T>,
-  cacheDuration = 5 * 60 * 1000, // default: 5 minutes
+  cacheDuration = 15 * 60 * 1000, // default: 15 minutes
 ): Promise<T> => {
   const cached = localStorage.getItem(key);
 

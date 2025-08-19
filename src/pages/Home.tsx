@@ -85,62 +85,67 @@ export const Home: React.FC = () => {
   }
 
   return (
-    <div className="container flex flex-col gap-15">
+    <div className="container flex flex-col gap-15 min-w-full">
       <div className="flex flex-col items-center gap-4">
-        <h1 className="text-4xl text-center mt-6">
+        <h1 className="text-2xl font-semibold md:text-4xl text-center mt-6">
           Cryptocurrency Market Overview
         </h1>
-        <div className="flex items-center gap-2">
-          <span>
-            The global cryptocurrency market cap today is{' '}
-            {formatToUsd(
-              globalMarketData.data.total_market_cap.usd.toString(),
-              true,
-            )}
-            , a
-          </span>
+
+        <p className="text-medium lg:text-lg max-w-full flex flex-wrap gap-2">
+          The global cryptocurrency market cap today is{' '}
+          {formatToUsd(
+            globalMarketData.data.total_market_cap.usd.toString(),
+            true,
+          )}
+          , a
           <TrendingIcon
             data={globalMarketData.data.market_cap_change_percentage_24h_usd}
           />
-          <span>change in the last 24 hours.</span>
-        </div>
+          change in the last 24 hours.
+        </p>
       </div>
 
-      <section className="grid grid-cols-5 grid-rows-2 gap-2">
-        <Card
-          title={formatToUsd(
-            globalMarketData.data.total_market_cap.usd.toString(),
-          )}
-          cardClassName="w-full col-span-1 row-span-1 gap-2 p-4"
-          titleClassName="text-lg font-semibold"
-          headerClassName="px-0"
-          contentClassName="p-0"
-        >
-          <div className="flex items-center gap-2">
-            <p className="text-gray-500 font-medium text-sm dark:text-gray-400">
-              Market Cap
-            </p>
-            <TrendingIcon
-              data={globalMarketData.data.market_cap_change_percentage_24h_usd}
-            ></TrendingIcon>
-          </div>
-        </Card>
+      <section className="flex gap-2 flex-col md:flex-row">
+        <div className="flex gap-2 flex-1/4 md:flex-col">
+          <Card
+            title={formatToUsd(
+              globalMarketData.data.total_market_cap.usd.toString(),
+            )}
+            cardClassName="gap-2 p-4 md:h-[50%] w-full"
+            titleClassName="lg:text-lg md:text-medium text-sm font-semibold "
+            headerClassName="px-0"
+            contentClassName="p-0"
+          >
+            <div className="flex items-center gap-2">
+              <p className="text-gray-500 font-medium text-sm dark:text-gray-400">
+                Market Cap
+              </p>
+              <TrendingIcon
+                data={
+                  globalMarketData.data.market_cap_change_percentage_24h_usd
+                }
+              ></TrendingIcon>
+            </div>
+          </Card>
 
-        <Card
-          title={formatToUsd(globalMarketData.data.total_volume.usd.toString())}
-          cardClassName="col-span-1 row-start-2 gap-2 p-4"
-          headerClassName="px-0"
-          titleClassName="text-lg font-semibold "
-          contentClassName="p-0"
-        >
-          <p className="text-gray-500 font-medium text-sm dark:text-gray-400">
-            24h Trading Volume
-          </p>
-        </Card>
+          <Card
+            title={formatToUsd(
+              globalMarketData.data.total_volume.usd.toString(),
+            )}
+            cardClassName="gap-2 p-4 md:h-[50%] w-full"
+            headerClassName="px-0"
+            titleClassName="lg:text-lg text-medium font-semibold "
+            contentClassName="p-0"
+          >
+            <p className="text-gray-500 font-medium text-sm dark:text-gray-400">
+              24h Trading Volume
+            </p>
+          </Card>
+        </div>
 
         <Card
           title="🔥 Trending"
-          cardClassName="col-start-2 row-span-2 col-span-2 p-4 justify-between gap-0"
+          cardClassName="p-4 justify-between gap-0 flex-2/5"
           headerClassName="px-0"
           contentClassName="flex flex-col gap-0 px-0"
           titleClassName="text-lg font-semibold"
@@ -160,7 +165,7 @@ export const Home: React.FC = () => {
         </Card>
         <Card
           title="🚀 Top Gainers"
-          cardClassName="col-start-4 row-span-2 col-span-2 gap-0 p-4 justify-between"
+          cardClassName="flex-2/5 gap-0 p-4 justify-between"
           headerClassName="px-0"
           contentClassName="flex flex-col gap-0 px-0"
           titleClassName="text-lg font-semibold"

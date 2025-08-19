@@ -5,7 +5,6 @@ import {
   Content as TooltipContentPrimitive,
   Portal,
   Provider as TooltipProviderPrimitive,
-  Arrow,
 } from '@radix-ui/react-tooltip';
 import { cn } from '@/lib/utils';
 
@@ -40,7 +39,6 @@ export function TooltipWrapper({
             )}
           >
             {content}
-            <Arrow className="fill-primary size-2.5 rotate-45" />
           </TooltipContentPrimitive>
         </Portal>
       </TooltipRoot>
