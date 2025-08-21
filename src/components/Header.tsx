@@ -1,13 +1,10 @@
 import React from 'react';
-import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { ModeToggle } from './ui/mode-toggle';
 import { useTheme } from './ui/themeProvider';
 import { NavLink } from 'react-router-dom';
-import { useAccount } from 'wagmi';
 
 export const Header: React.FC = () => {
   const theme = useTheme();
-  const { isConnected } = useAccount();
   return (
     <header className="flex items-center gap-2 px-2 py-4 bg-muted rounded-md shadow-sm max-h-20 md:px-4 md:gap-8 dark:bg-black dark:border-gray-400 dark:border-b-1">
       <div className="flex items-center gap-6">
@@ -29,15 +26,7 @@ export const Header: React.FC = () => {
           </NavLink>
         ))}
       </nav>
-
       <ModeToggle></ModeToggle>
-      {isConnected && (
-        <ConnectButton
-          showBalance={false}
-          accountStatus={'avatar'}
-          chainStatus={'icon'}
-        ></ConnectButton>
-      )}
     </header>
   );
 };

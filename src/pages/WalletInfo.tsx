@@ -1,5 +1,5 @@
 import { ChartPieLabelList } from '@/components/PieChart';
-import { SkeletonCard } from '@/components/SkeletonCard';
+import { SkeletonCard } from '@/components/Skeletons/SkeletonCard';
 import { DataTable } from '@/components/ui/Tables/DataTable';
 import { tokenColumns } from '@/components/ui/Tables/tokenColumns';
 import { columns } from '@/components/ui/Tables/transactionColumns';
@@ -18,6 +18,8 @@ export const WalletInfo: React.FC = () => {
     EvmWalletHistoryTransaction[]
   >([]);
   const [isLoading, setIsLoading] = useState(false);
+
+  const { isConnected } = useAccount();
 
   const tokensData = [...tokens].map(token => {
     return {
@@ -113,9 +115,8 @@ export const WalletInfo: React.FC = () => {
 
   return (
     <div className="flex flex-col gap-15 w-full">
-      <h1 className="text-4xl font-bold text-center mt-10">
-        Wallet Information
-      </h1>
+      {isConnected && <ConnectButton />}
+      <h1 className="text-4xl font-bold text-center">Wallet Information</h1>
       <section className="space-y-20">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 min-w-full">
           <section className="col-span-1">

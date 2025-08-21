@@ -1,13 +1,12 @@
 import { Card } from '@/components/Card';
 import { HomeTokensTable } from '@/components/HomeTokenTable';
 import { NewsCard } from '@/components/NewsCard';
-import { SkeletonCard } from '@/components/SkeletonCard';
+import { SkeletonCard } from '@/components/Skeletons/SkeletonCard';
 import { SmTokenCard } from '@/components/SmTokenCard';
 import { TrendingIcon } from '@/components/TrendingIcon';
 import { tokenColumns } from '@/components/ui/Tables/HomeTokensColumns';
 import { useTokens } from '@/context/TokenContext';
 import { useMemo } from 'react';
-
 import { getGlobalMarketData, getTrendingTokens } from '@/lib/fetchCoinGecko';
 import { getNews } from '@/lib/fetchNewsData';
 import { fetchWithCache, formatToUsd } from '@/lib/utils';
@@ -15,6 +14,10 @@ import type { GlobalCryptoData } from '@/types/GlobalMarketData';
 import type { NewsArticle } from '@/types/NewsArticle';
 import type { TrendingCoin } from '@/types/TrendingCoin';
 import { useEffect, useState } from 'react';
+import { SmTokenCardSkeleton } from '@/components/Skeletons/SmTokenCardSkeleton';
+import { Skeleton } from '@/components/ui/skeleton';
+import { NewsCardSkeleton } from '@/components/Skeletons/NewsCardSkeleton';
+import { Button } from '@/components/ui/button';
 
 export const Home: React.FC = () => {
   const [globalMarketData, setGlobalMarketData] =
@@ -61,28 +64,19 @@ export const Home: React.FC = () => {
 
   const isDataLoading = isLoading || !tokens || !globalMarketData || !trending;
 
-  if (error) return <div>Error occurred: {String(error)}</div>;
-
-  if (isDataLoading) {
+  if (error)
     return (
-      <div className="container py-6 space-y-8">
-        <div className="grid grid-cols-5 grid-rows-2 gap-2">
-          {Array.from({ length: 5 }).map((_, idx) => (
-            <SkeletonCard key={idx} />
-          ))}
-        </div>
-
-        <section>
-          <h1 className="text-2xl font-bold mb-4">Top 5</h1>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-            {Array.from({ length: 5 }).map((_, idx) => (
-              <SkeletonCard key={idx} />
-            ))}
-          </div>
-        </section>
+      <div className="flex justify-center items-center gap-5 h-80%">
+        <h1>Error occurred: {String(error)}</h1>
+        <Button
+          size={'lg'}
+          variant={'outline'}
+          onClick={() => window.location.reload()}
+        >
+          Reload Page
+        </Button>
       </div>
     );
-  }
 
   return (
     <div className="container flex flex-col gap-15 min-w-full">
@@ -90,57 +84,73 @@ export const Home: React.FC = () => {
         <h1 className="text-2xl font-semibold md:text-4xl text-center mt-6">
           Cryptocurrency Market Overview
         </h1>
-
-        <p className="text-medium lg:text-lg max-w-full flex flex-wrap gap-2">
-          The global cryptocurrency market cap today is{' '}
-          {formatToUsd(
-            globalMarketData.data.total_market_cap.usd.toString(),
-            true,
-          )}
-          , a
-          <TrendingIcon
-            data={globalMarketData.data.market_cap_change_percentage_24h_usd}
-          />
-          change in the last 24 hours.
-        </p>
+        {isDataLoading ? (
+          <Skeleton className="w-[50%] h-3" />
+        ) : (
+          <p className="text-medium lg:text-lg max-w-full flex flex-wrap gap-2">
+            The global cryptocurrency market cap today is{' '}
+            {formatToUsd(
+              globalMarketData.data.total_market_cap.usd.toString(),
+              true,
+            )}
+            , a{' '}
+            <TrendingIcon
+              data={globalMarketData.data.market_cap_change_percentage_24h_usd}
+            />{' '}
+            change in the last 24 hours.
+          </p>
+        )}
       </div>
 
       <section className="flex gap-2 flex-col md:flex-row">
         <div className="flex gap-2 flex-1/4 md:flex-col">
-          <Card
-            title={formatToUsd(
-              globalMarketData.data.total_market_cap.usd.toString(),
-            )}
-            cardClassName="gap-2 p-4 md:h-[50%] w-full"
-            titleClassName="lg:text-lg md:text-medium text-sm font-semibold "
-            headerClassName="px-0"
-            contentClassName="p-0"
-          >
-            <div className="flex items-center gap-2">
-              <p className="text-gray-500 font-medium text-sm dark:text-gray-400">
-                Market Cap
-              </p>
-              <TrendingIcon
-                data={
-                  globalMarketData.data.market_cap_change_percentage_24h_usd
-                }
-              ></TrendingIcon>
-            </div>
-          </Card>
+          {isDataLoading ? (
+            <>
+              <Card>
+                <SkeletonCard />
+              </Card>
+              <Card>
+                <SkeletonCard />
+              </Card>
+            </>
+          ) : (
+            <>
+              <Card
+                title={formatToUsd(
+                  globalMarketData.data.total_market_cap.usd.toString(),
+                )}
+                cardClassName="gap-2 p-4 md:h-[50%] w-full"
+                titleClassName="lg:text-lg md:text-medium text-sm font-semibold "
+                headerClassName="px-0"
+                contentClassName="p-0"
+              >
+                <div className="flex items-center gap-2">
+                  <p className="text-gray-500 font-medium text-sm dark:text-gray-400">
+                    Market Cap
+                  </p>
+                  <TrendingIcon
+                    data={
+                      globalMarketData.data.market_cap_change_percentage_24h_usd
+                    }
+                  ></TrendingIcon>
+                </div>
+              </Card>
 
-          <Card
-            title={formatToUsd(
-              globalMarketData.data.total_volume.usd.toString(),
-            )}
-            cardClassName="gap-2 p-4 md:h-[50%] w-full"
-            headerClassName="px-0"
-            titleClassName="lg:text-lg text-medium font-semibold "
-            contentClassName="p-0"
-          >
-            <p className="text-gray-500 font-medium text-sm dark:text-gray-400">
-              24h Trading Volume
-            </p>
-          </Card>
+              <Card
+                title={formatToUsd(
+                  globalMarketData.data.total_volume.usd.toString(),
+                )}
+                cardClassName="gap-2 p-4 md:h-[50%] w-full"
+                headerClassName="px-0"
+                titleClassName="lg:text-lg text-medium font-semibold "
+                contentClassName="p-0"
+              >
+                <p className="text-gray-500 font-medium text-sm dark:text-gray-400">
+                  24h Trading Volume
+                </p>
+              </Card>
+            </>
+          )}
         </div>
 
         <Card
@@ -150,18 +160,22 @@ export const Home: React.FC = () => {
           contentClassName="flex flex-col gap-0 px-0"
           titleClassName="text-lg font-semibold"
         >
-          {trending.map(token => (
-            <SmTokenCard
-              id={token.item.id}
-              name={token.item.name}
-              image={token.item.small}
-              current_price={token.item.data.price}
-              price_change_percentage_24h={
-                token.item.data.price_change_percentage_24h.usd
-              }
-              key={token.item.id}
-            />
-          ))}
+          {isDataLoading
+            ? Array.from({ length: 5 }).map((_, i) => (
+                <SmTokenCardSkeleton key={i} />
+              ))
+            : trending.map(token => (
+                <SmTokenCard
+                  id={token.item.id}
+                  name={token.item.name}
+                  image={token.item.small}
+                  current_price={token.item.data.price}
+                  price_change_percentage_24h={
+                    token.item.data.price_change_percentage_24h.usd
+                  }
+                  key={token.item.id}
+                />
+              ))}
         </Card>
         <Card
           title="🚀 Top Gainers"
@@ -170,20 +184,22 @@ export const Home: React.FC = () => {
           contentClassName="flex flex-col gap-0 px-0"
           titleClassName="text-lg font-semibold"
         >
-          {gainers.length > 0 ? (
-            gainers.map(token => (
-              <SmTokenCard
-                id={token.id}
-                name={token.name}
-                image={token.image}
-                current_price={token.current_price}
-                price_change_percentage_24h={token.price_change_percentage_24h}
-                key={token.id}
-              />
-            ))
-          ) : (
-            <p>Loading top gainers...</p>
-          )}
+          {isDataLoading
+            ? Array.from({ length: 5 }).map((_, i) => (
+                <SmTokenCardSkeleton key={i} />
+              ))
+            : gainers.map(token => (
+                <SmTokenCard
+                  id={token.id}
+                  name={token.name}
+                  image={token.image}
+                  current_price={token.current_price}
+                  price_change_percentage_24h={
+                    token.price_change_percentage_24h
+                  }
+                  key={token.id}
+                />
+              ))}
         </Card>
       </section>
 
@@ -194,6 +210,7 @@ export const Home: React.FC = () => {
         <HomeTokensTable
           data={topTenTokens}
           columns={tokenColumns}
+          isLoading={isDataLoading}
         ></HomeTokensTable>
       </section>
 
@@ -202,7 +219,11 @@ export const Home: React.FC = () => {
           Last Crypto News
         </h1>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 ">
-          {news.length > 0 ? (
+          {isDataLoading ? (
+            Array.from({ length: 6 }).map((_, i) => (
+              <NewsCardSkeleton key={i} />
+            ))
+          ) : news.length > 0 ? (
             news.map(article => (
               <NewsCard
                 title={article.title}
@@ -218,7 +239,7 @@ export const Home: React.FC = () => {
               />
             ))
           ) : (
-            <p>Loading news...</p>
+            <p>There are no news at the moment</p>
           )}
         </div>
       </section>
