@@ -79,7 +79,7 @@ export const Home: React.FC = () => {
     );
 
   return (
-    <div className="container flex flex-col gap-15 min-w-full">
+    <>
       <div className="flex flex-col items-center gap-4">
         <h1 className="text-2xl font-semibold md:text-4xl text-center mt-6">
           Cryptocurrency Market Overview
@@ -102,7 +102,7 @@ export const Home: React.FC = () => {
         )}
       </div>
 
-      <section className="flex gap-2 flex-col md:flex-row">
+      <section className="flex gap-2 flex-col md:flex-row w-full">
         <div className="flex gap-2 flex-1/4 md:flex-col">
           {isDataLoading ? (
             <>
@@ -203,7 +203,7 @@ export const Home: React.FC = () => {
         </Card>
       </section>
 
-      <section>
+      <section className="w-full">
         <h1 className="text-2xl font-medium mb-10 text-center">
           Top 10 Cryptocurrencies{' '}
         </h1>
@@ -214,7 +214,7 @@ export const Home: React.FC = () => {
         ></HomeTokensTable>
       </section>
 
-      <section>
+      <section className="w-full">
         <h1 className="text-2xl font-medium mb-10 text-center">
           Last Crypto News
         </h1>
@@ -243,6 +243,6 @@ export const Home: React.FC = () => {
           )}
         </div>
       </section>
-    </div>
+    </>
   );
 };

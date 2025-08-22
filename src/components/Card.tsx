@@ -23,7 +23,7 @@ export function Card({
   titleClassName,
 }: CardProps) {
   return (
-    <ShadCard className={`shadow-lg ${cardClassName}`}>
+    <ShadCard className={`shadow-lg w-full ${cardClassName}`}>
       {title && (
         <CardHeader className={headerClassName}>
           <CardTitle

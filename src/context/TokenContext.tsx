@@ -1,10 +1,9 @@
-// context/TokensContext.tsx
 import { createContext, useContext, useState, useEffect } from 'react';
 import { getTokens } from '@/lib/fetchCoinGecko';
 import type { TokenCoinGecko } from '@/types/TokenCoinGecko';
 
 type TokensContextType = {
-  tokens: TokenCoinGecko[] | null;
+  tokens: TokenCoinGecko[];
   isLoading: boolean;
   error: string | null;
 };
@@ -14,15 +13,26 @@ const TokensContext = createContext<TokensContextType | undefined>(undefined);
 export const TokensProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [tokens, setTokens] = useState<TokenCoinGecko[] | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [tokens, setTokens] = useState<TokenCoinGecko[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    getTokens()
-      .then(setTokens)
-      .catch(err => setError(err.message))
-      .finally(() => setIsLoading(false));
+    const fetchTokens = async () => {
+      setIsLoading(true);
+      setError(null);
+
+      try {
+        const [page1, page2] = await Promise.all([getTokens(), getTokens('2')]);
+        setTokens([...page1, ...page2]);
+      } catch {
+        setError('Failed to fetch tokens');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchTokens();
   }, []);
 
   return (
