@@ -84,13 +84,13 @@ export const Cryptocurrencies: React.FC = () => {
   if (error) return <div>Something went wrong please try agin lateer</div>;
 
   return (
-    <div className="container mx-auto px-4 py-8 flex flex-col gap-10 items-center">
+    <div className="container m-h-full mx-auto px-4 py-8 flex flex-col gap-10 items-center">
       <Input
         type="search"
         placeholder="Type to search"
         value={typedQuery}
         onChange={e => setTypedQuery(e.target.value)}
-        className="max-w-1/2"
+        className="max-w-1/2 h-full"
       ></Input>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 w-full">
         {isLoading ? (

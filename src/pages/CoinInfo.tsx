@@ -62,7 +62,8 @@ export const CoinInfo: React.FC = () => {
     { time: string; price: number; timestamp: number }[]
   >([]);
 
-  // Theme-aware colors
+  const [isDisabled, setIsDisabled] = useState(false);
+
   const isDark =
     theme === 'dark' ||
     (theme === 'system' &&
@@ -86,7 +87,15 @@ export const CoinInfo: React.FC = () => {
       }
     };
 
+    fetchToken();
+  }, [tokenId]);
+
+  useEffect(() => {
+    setIsDisabled(true);
     const fetchChart = async () => {
+      if (!tokenId) {
+        return;
+      }
       try {
         const data = await getMarketChart(tokenId, selectedRange);
         const formatted = (data.prices as [number, number][]).map(
@@ -102,9 +111,8 @@ export const CoinInfo: React.FC = () => {
         console.error('Failed to fetch market chart:', err);
       }
     };
-
-    fetchToken();
     fetchChart();
+    setTimeout(() => setIsDisabled(false), 2000);
   }, [tokenId, selectedRange]);
 
   if (error) {
@@ -137,7 +145,7 @@ export const CoinInfo: React.FC = () => {
   return (
     <>
       {/* Header */}
-      <div className="flex flex-col sm:flex-row items-center gap-4 mt-5">
+      <div className="flex flex-col sm:flex-row items-center gap-3 mt-5">
         <div className="flex items-center gap-3">
           <img
             src={token.image.large}
@@ -171,21 +179,22 @@ export const CoinInfo: React.FC = () => {
             <Button
               key={range}
               className={cn(
-                'min-w-[60px] transition-all duration-200',
+                'min-w-[60px] transition-all duration-200 cursor-pointer border-gray-400',
                 selectedRange === range
-                  ? 'bg-primary text-primary-foreground border-primary'
+                  ? 'bg-primary text-primary-foreground border-2 border-primary'
                   : 'hover:bg-muted',
               )}
               variant={selectedRange === range ? 'default' : 'outline'}
               size="sm"
               onClick={() => setSelectedRange(range)}
+              disabled={isDisabled}
             >
               {range}
             </Button>
           ))}
         </div>
 
-        <div className="w-full h-[350px] sm:h-[500px]">
+        <div className="w-full h-[400px] sm:h-[400px]">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart
               data={chartData}
@@ -211,6 +220,7 @@ export const CoinInfo: React.FC = () => {
                 tickLine={false}
                 axisLine={false}
                 tick={{ fill: textColor }}
+                padding={{ bottom: 20 }}
                 tickFormatter={value => formatToUsd(value)}
               />
               <Tooltip
@@ -245,7 +255,11 @@ export const CoinInfo: React.FC = () => {
       </Card>
 
       {/* Market Info Section */}
-      <Card title="Market Information" contentClassName="p-6">
+      <Card
+        title="Market Information"
+        contentClassName="px-6"
+        titleClassName="text-2xl font-semibold"
+      >
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           <div className="space-y-2">
             <p className="text-sm text-muted-foreground font-medium">
@@ -328,7 +342,11 @@ export const CoinInfo: React.FC = () => {
 
       {/* Description Section */}
       {token.description?.en && (
-        <Card title="About" contentClassName="p-6">
+        <Card
+          title="About"
+          contentClassName="px-6"
+          titleClassName="text-2xl font-semibold"
+        >
           <div
             className="prose prose-sm max-w-none text-muted-foreground leading-relaxed"
             dangerouslySetInnerHTML={{ __html: token.description.en }}
