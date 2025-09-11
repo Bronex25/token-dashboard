@@ -76,7 +76,6 @@ export async function getAllTransactions(address: string) {
       console.error(`Failed to fetch transactions on ${chain.name}`, err);
     }
   }
-
   return allTxs;
 }
 

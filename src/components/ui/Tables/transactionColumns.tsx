@@ -1,32 +1,40 @@
 'use client';
 
-import type { EvmWalletHistoryTransaction } from '@moralisweb3/common-evm-utils';
+import { CopyButton } from '@/components/CopyButton';
+export type TransactionRow = {
+  hash: string;
+  fromAddress?: string;
+  toAddress?: string;
+  fromAddressEntityLogo?: string | null;
+  toAddressEntityLogo?: string | null;
+  summary?: string;
+  blockTimestamp?: string | number | Date | null;
+};
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from '@radix-ui/react-tooltip';
+} from '@/components/ui/tooltip';
 import type { ColumnDef } from '@tanstack/react-table';
-import { Copy } from 'lucide-react';
 
-export const columns: ColumnDef<EvmWalletHistoryTransaction>[] = [
+export const columns: ColumnDef<TransactionRow>[] = [
   {
     header: 'Hash',
     cell: ({ row }) => {
-      const hash = row.original.hash;
+      const hash = row.original.hash || '';
       return (
         <>
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
                 <span className="truncate max-w-[100px] cursor-pointer text-sm font-mono text-muted-foreground">
-                  {hash.slice(0, 6)}...{hash.slice(-4)}
+                  {hash ? `${hash.slice(0, 6)}...${hash.slice(-4)}` : '-'}
                 </span>
               </TooltipTrigger>
               <TooltipContent
                 side="top"
-                className="bg-amber-100 border border-amber-300 px-3 py-2 rounded-md shadow-[0_4px_6px_rgba(0,0,0,0.1),_0_1px_3px_rgba(0,0,0,0.06)] text-xs max-w-fit font-mono break-words"
+                className="bg-white text-black dark:bg-black dark:text-white dark:border-white border border-black px-3 py-2 rounded-md shadow-[0_4px_6px_rgba(0,0,0,0.1),_0_1px_3px_rgba(0,0,0,0.06)] text-xs max-w-fit font-mono break-words"
               >
                 {hash}
               </TooltipContent>
@@ -39,12 +47,23 @@ export const columns: ColumnDef<EvmWalletHistoryTransaction>[] = [
   {
     header: 'From',
     cell: ({ row }) => {
-      const from =
-        typeof row.original.fromAddress === 'string'
-          ? row.original.fromAddress
-          : row.original.fromAddress?.lowercase;
+      const rawFrom: unknown = row.original.fromAddress as unknown;
+      let from = '';
+      if (typeof rawFrom === 'string') {
+        from = rawFrom;
+      } else if (rawFrom && typeof rawFrom === 'object') {
+        const maybeObj = rawFrom as { lowercase?: string; address?: string };
+        from = maybeObj.lowercase || maybeObj.address || '';
+      }
       return (
         <div className="flex gap-2">
+          {row.original.fromAddressEntityLogo && (
+            <img
+              className="w-5 h-5"
+              src={row.original.fromAddressEntityLogo || ''}
+              alt="From Address Logo"
+            />
+          )}
           <a
             href={`https://etherscan.io/address/${from}`}
             target="_blank"
@@ -52,7 +71,7 @@ export const columns: ColumnDef<EvmWalletHistoryTransaction>[] = [
           >
             {from ? `${from.slice(0, 6)}...${from.slice(-4)}` : '-'}
           </a>
-          <Copy className="w-3.5 h-3.5"></Copy>
+          <CopyButton text={from || ''} variant="ghost" size="sm" />
         </div>
       );
     },
@@ -60,18 +79,69 @@ export const columns: ColumnDef<EvmWalletHistoryTransaction>[] = [
   {
     header: 'To',
     cell: ({ row }) => {
-      const to =
-        typeof row.original.toAddress === 'string'
-          ? row.original.toAddress
-          : row.original.toAddress?.lowercase;
-      return to ? `${to.slice(0, 6)}...${to.slice(-4)}` : '-';
+      const rawTo: unknown = row.original.toAddress as unknown;
+      let to = '';
+      if (typeof rawTo === 'string') {
+        to = rawTo;
+      } else if (rawTo && typeof rawTo === 'object') {
+        const maybeObj = rawTo as { lowercase?: string; address?: string };
+        to = maybeObj.lowercase || maybeObj.address || '';
+      }
+      return (
+        <div className="flex gap-2">
+          {row.original.toAddressEntityLogo && (
+            <img
+              className="w-5 h-5"
+              src={row.original.toAddressEntityLogo || ''}
+              alt="From Address Logo"
+            />
+          )}
+          <a
+            href={`https://etherscan.io/address/${to}`}
+            target="_blank"
+            rel="noreferrer"
+          >
+            {to ? `${to.slice(0, 6)}...${to.slice(-4)}` : '-'}
+          </a>
+          <CopyButton text={to || ''} variant="ghost" size="sm" />
+        </div>
+      );
     },
   },
   {
     accessorKey: 'summary',
-    header: 'Fee',
+    header: 'Summary',
     cell: ({ row }) => {
-      return row.original.transactionFee?.slice(0, 5);
+      return <div> {row.original.summary || ''}</div>;
+    },
+  },
+  {
+    accessorKey: 'date',
+    header: 'Date',
+    cell: ({ row }) => {
+      const ts = row.original.blockTimestamp;
+      const dateString =
+        typeof ts === 'string' || typeof ts === 'number'
+          ? ts
+          : ts instanceof Date
+            ? ts.toISOString()
+            : ts && typeof ts === 'object'
+              ? // handle Moralis/date-like objects restored from JSON
+                (ts as { iso?: string; $date?: string | number } | null)?.iso ||
+                (ts as { $date?: string | number } | null)?.$date ||
+                ''
+              : '';
+      const date = dateString ? new Date(dateString) : new Date(NaN);
+      const formatted = isNaN(date.getTime())
+        ? '-'
+        : date.toLocaleString(undefined, {
+            year: 'numeric',
+            month: 'short',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+          });
+      return <p className="whitespace-nowrap text-sm">{formatted}</p>;
     },
   },
 ];
