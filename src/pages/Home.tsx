@@ -17,7 +17,7 @@ import { useEffect, useState } from 'react';
 import { SmTokenCardSkeleton } from '@/components/Skeletons/SmTokenCardSkeleton';
 import { Skeleton } from '@/components/ui/skeleton';
 import { NewsCardSkeleton } from '@/components/Skeletons/NewsCardSkeleton';
-import { Button } from '@/components/ui/button';
+import ErrorPage from './ErrorPage';
 
 export const Home: React.FC = () => {
   const [globalMarketData, setGlobalMarketData] =
@@ -64,19 +64,7 @@ export const Home: React.FC = () => {
 
   const isDataLoading = isLoading || !tokens || !globalMarketData || !trending;
 
-  if (error)
-    return (
-      <div className="flex justify-center items-center gap-5 h-80%">
-        <h1>Error occurred: {String(error)}</h1>
-        <Button
-          size={'lg'}
-          variant={'outline'}
-          onClick={() => window.location.reload()}
-        >
-          Reload Page
-        </Button>
-      </div>
-    );
+  if (error) return <ErrorPage error={error} />;
 
   return (
     <>

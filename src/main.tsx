@@ -11,7 +11,20 @@ import { RainbowKitWrapper } from './components/RainbowKitProvider.tsx';
 import { BrowserRouter } from 'react-router-dom';
 import { TokensProvider } from './context/TokenContext.tsx';
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 60 * 1000,
+      gcTime: 5 * 60 * 1000,
+      retry: 2,
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: true,
+    },
+    mutations: {
+      retry: 1,
+    },
+  },
+});
 
 createRoot(document.getElementById('root')!).render(
   <WagmiProvider config={config}>

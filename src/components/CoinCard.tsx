@@ -29,7 +29,7 @@ export function CoinCard({ coin }: CoinCardProps) {
   const trendColor = isPositive ? '#22c55e' : '#ef4444';
 
   return (
-    <Card className="hover:shadow-xl transition-all duration-200 group w-full">
+    <Card className="hover:shadow-xl transition-all duration-200 group w-full col-span-1">
       <Link
         to={`/cryptocurrencies/${coin.id}`}
         className="w-full flex flex-col gap-3 justify-between"

@@ -1,5 +1,4 @@
 import { ChartPieLabelList } from '@/components/PieChart';
-import { SkeletonCard } from '@/components/Skeletons/SkeletonCard';
 import { DataTable } from '@/components/ui/Tables/DataTable';
 import { tokenColumns } from '@/components/ui/Tables/tokenColumns';
 import {
@@ -13,6 +12,8 @@ import type { EvmWalletHistoryTransaction } from '@moralisweb3/common-evm-utils'
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { useEffect, useState, useCallback } from 'react';
 import { useAccount } from 'wagmi';
+import ErrorPage from './ErrorPage';
+import { PieChartSkeleton } from '@/components/Skeletons/PieChartSkeleton';
 
 const normalizeTx = (
   tx: EvmWalletHistoryTransaction | Record<string, unknown>,
@@ -127,14 +128,17 @@ export const WalletInfo: React.FC = () => {
 
   if (!isConnected) {
     return (
-      <div className="flex justify-center py-20">
+      <div className="flex flex-col justify-center items-center gap-5 py-20">
+        <h1 className="text-2xl font-bold">
+          Please connect your wallet to see full Information
+        </h1>
         <ConnectButton />
       </div>
     );
   }
 
   if (error) {
-    return <div className="text-center text-red-500 py-10">{error}</div>;
+    return <ErrorPage error={error} />;
   }
 
   return (
@@ -149,7 +153,7 @@ export const WalletInfo: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full">
           <section>
             <h2 className="text-2xl font-bold mb-4">Wallet Overview</h2>
-            {isLoading && <SkeletonCard />}
+            {isLoading && <PieChartSkeleton />}
 
             {!isLoading && tokens.length > 0 && (
               <ChartPieLabelList data={dataForPieChart} />

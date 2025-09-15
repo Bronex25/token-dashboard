@@ -17,7 +17,7 @@ export const TrendingIcon: React.FC<Props> = ({ data }) => {
       ) : (
         <TrendingDown className="h-4 w-4" />
       )}
-      {data.toFixed(2)}%
+      {data ? data.toFixed(2) : 0}%
     </span>
   );
 };

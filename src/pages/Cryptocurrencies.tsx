@@ -13,6 +13,7 @@ import {
   PaginationPrevious,
 } from '@/components/ui/pagination';
 import { CoinCardSkeleton } from '@/components/Skeletons/CoinCardSkeleton';
+import ErrorPage from './ErrorPage';
 
 export const Cryptocurrencies: React.FC = () => {
   const { tokens, isLoading, error } = useTokens();
@@ -81,18 +82,18 @@ export const Cryptocurrencies: React.FC = () => {
     return pages;
   };
 
-  if (error) return <div>Something went wrong please try agin lateer</div>;
+  if (error) return <ErrorPage error={error} />;
 
   return (
-    <div className="container m-h-full mx-auto px-4 py-8 flex flex-col gap-10 items-center">
+    <div className="container m-h-full mx-auto px-4 py-8 flex flex-col gap-10 items-center min-w-full">
       <Input
         type="search"
         placeholder="Type to search"
         value={typedQuery}
         onChange={e => setTypedQuery(e.target.value)}
-        className="max-w-1/2 h-full"
+        className="w-full lg:w-[60%] h-9"
       ></Input>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 w-full">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 min-w-full">
         {isLoading ? (
           Array.from({ length: perPage }).map((_, i) => (
             <CoinCardSkeleton key={i} />

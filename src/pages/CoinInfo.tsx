@@ -17,6 +17,7 @@ import { Card } from '@/components/Card';
 import { cn, formatToUsd } from '@/lib/utils';
 import { useTheme } from '@/components/ui/themeProvider';
 import { TrendingIcon } from '@/components/TrendingIcon';
+import ErrorPage from './ErrorPage';
 
 export type Range = '7d' | '30d' | '90d' | '1y';
 
@@ -56,7 +57,7 @@ export const CoinInfo: React.FC = () => {
   const { tokenId } = useParams();
   const { theme } = useTheme();
   const [token, setToken] = useState<TokenById | null>(null);
-  const [error, setError] = useState(false);
+  const [error, setError] = useState('');
   const [selectedRange, setSelectedRange] = useState<Range>('7d');
   const [chartData, setChartData] = useState<
     { time: string; price: number; timestamp: number }[]
@@ -76,13 +77,13 @@ export const CoinInfo: React.FC = () => {
   useEffect(() => {
     if (!tokenId) return;
 
-    setError(false);
+    setError('');
     const fetchToken = async () => {
       try {
         const fetchedToken = await getTokenById(tokenId);
         setToken(fetchedToken);
       } catch (error) {
-        setError(true);
+        setError(String(error));
         console.error('Failed to fetch token by ID:', error);
       }
     };
@@ -107,7 +108,7 @@ export const CoinInfo: React.FC = () => {
         );
         setChartData(formatted);
       } catch (err) {
-        setError(true);
+        setError(String(error));
         console.error('Failed to fetch market chart:', err);
       }
     };
@@ -116,13 +117,7 @@ export const CoinInfo: React.FC = () => {
   }, [tokenId, selectedRange]);
 
   if (error) {
-    return (
-      <div className="container mx-auto px-4 py-8">
-        <div className="p-4 text-red-500 text-center">
-          Something went wrong. Please try again.
-        </div>
-      </div>
-    );
+    return <ErrorPage error={error} />;
   }
 
   if (!token) {

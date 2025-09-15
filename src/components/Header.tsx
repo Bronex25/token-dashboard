@@ -6,12 +6,12 @@ import { Link, NavLink } from 'react-router-dom';
 export const Header: React.FC = () => {
   const theme = useTheme();
   return (
-    <header className="flex items-center gap-2 px-2 py-4 bg-muted rounded-md shadow-sm max-h-20 md:px-4 md:gap-8 dark:bg-black dark:border-gray-400 dark:border-b-1">
+    <header className="sticky top-0 z-50 flex gap-2 items-center justify-between px-2 py-2 backdrop-blur-md bg-muted/80 shadow-md border-b dark:bg-black/50 dark:border-gray-800">
       <Link to={'/'} className="flex items-center gap-6">
         <img
           src={theme.theme === 'dark' ? './logo-dark.png' : './logo-white.png'}
           alt="Logo"
-          className="max-w-20 sm:max-w-25"
+          className="max-h-12 w-auto px-2"
         />
       </Link>
 
@@ -21,7 +21,7 @@ export const Header: React.FC = () => {
             key={item}
             to={item === 'Home' ? '/' : `/${item.toLowerCase()}`}
             className={({ isActive }) =>
-              `${isActive ? 'font-semibold underline underline-offset-4' : ''} hover:opacity-70 transition-all ease-in-out px-1 py-0.5`
+              `${isActive ? 'font-semibold underline underline-offset-4' : 'hover:opacity-60'} transition-all ease-in-out px-1 py-0.5`
             }
           >
             {item}

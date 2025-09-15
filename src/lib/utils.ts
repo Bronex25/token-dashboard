@@ -28,7 +28,8 @@ export const fetchWithCache = async <T>(
 };
 
 export function formatToUsd(data: string, compact = false): string {
-  const value = parseFloat(data);
+  const value = Number.parseFloat(data);
+  if (!Number.isFinite(value)) return '$0';
   if (value >= 10000) {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
@@ -46,13 +47,13 @@ export function formatToUsd(data: string, compact = false): string {
     return `$${value.toFixed(4)}`;
   }
 
-  const parts = value.toExponential().split('e-');
-  const digits = parseInt(parts[1], 10) + 2;
-  return `$${value.toFixed(digits)}`;
+  const fixed = value.toFixed(8);
+  return `$${fixed.replace(/\.0+$/, '')}`;
 }
 
 export function formatTokenBalance(raw: string): string {
-  const num = parseFloat(raw);
+  const num = Number.parseFloat(raw);
+  if (!Number.isFinite(num)) return '0';
   if (num === 0) return '0';
   if (num > 1) return num.toFixed(3).replace(/\.?0+$/, '');
   return num.toFixed(6).replace(/\.?0+$/, '');
