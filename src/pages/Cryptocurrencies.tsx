@@ -1,5 +1,5 @@
 import { CoinCard } from '@/components/CoinCard';
-import { Input } from '@/components/ui/input';
+import { Input } from '@/components/shadcn_ui/input';
 import { useTokens } from '@/context/TokenContext';
 import React, { useEffect, useMemo, useState } from 'react';
 import { debounce } from 'lodash';
@@ -11,8 +11,8 @@ import {
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
-} from '@/components/ui/pagination';
-import { CoinCardSkeleton } from '@/components/Skeletons/CoinCardSkeleton';
+} from '@/components/shadcn_ui/pagination';
+import { CoinCardSkeleton } from '@/components/skeletons/CoinCardSkeleton';
 import ErrorPage from './ErrorPage';
 
 export const Cryptocurrencies: React.FC = () => {

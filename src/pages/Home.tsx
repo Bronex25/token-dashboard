@@ -1,10 +1,10 @@
 import { Card } from '@/components/Card';
 import { HomeTokensTable } from '@/components/HomeTokenTable';
 import { NewsCard } from '@/components/NewsCard';
-import { SkeletonCard } from '@/components/Skeletons/SkeletonCard';
+import { SkeletonCard } from '@/components/skeletons/SkeletonCard';
 import { SmTokenCard } from '@/components/SmTokenCard';
 import { TrendingIcon } from '@/components/TrendingIcon';
-import { tokenColumns } from '@/components/ui/Tables/HomeTokensColumns';
+import { tokenColumns } from '@/components/shadcn_ui/Tables/HomeTokensColumns';
 import { useTokens } from '@/context/TokenContext';
 import { useMemo } from 'react';
 import { getGlobalMarketData, getTrendingTokens } from '@/lib/fetchCoinGecko';
@@ -14,9 +14,9 @@ import type { GlobalCryptoData } from '@/types/GlobalMarketData';
 import type { NewsArticle } from '@/types/NewsArticle';
 import type { TrendingCoin } from '@/types/TrendingCoin';
 import { useEffect, useState } from 'react';
-import { SmTokenCardSkeleton } from '@/components/Skeletons/SmTokenCardSkeleton';
-import { Skeleton } from '@/components/ui/skeleton';
-import { NewsCardSkeleton } from '@/components/Skeletons/NewsCardSkeleton';
+import { SmTokenCardSkeleton } from '@/components/skeletons/SmTokenCardSkeleton';
+import { Skeleton } from '@/components/shadcn_ui/skeleton';
+import { NewsCardSkeleton } from '@/components/skeletons/NewsCardSkeleton';
 import ErrorPage from './ErrorPage';
 
 export const Home: React.FC = () => {
@@ -150,20 +150,20 @@ export const Home: React.FC = () => {
         >
           {isDataLoading
             ? Array.from({ length: 5 }).map((_, i) => (
-                <SmTokenCardSkeleton key={i} />
-              ))
+              <SmTokenCardSkeleton key={i} />
+            ))
             : trending.map(token => (
-                <SmTokenCard
-                  id={token.item.id}
-                  name={token.item.name}
-                  image={token.item.small}
-                  current_price={token.item.data.price}
-                  price_change_percentage_24h={
-                    token.item.data.price_change_percentage_24h.usd
-                  }
-                  key={token.item.id}
-                />
-              ))}
+              <SmTokenCard
+                id={token.item.id}
+                name={token.item.name}
+                image={token.item.small}
+                current_price={token.item.data.price}
+                price_change_percentage_24h={
+                  token.item.data.price_change_percentage_24h.usd
+                }
+                key={token.item.id}
+              />
+            ))}
         </Card>
         <Card
           title="🚀 Top Gainers"
@@ -174,20 +174,20 @@ export const Home: React.FC = () => {
         >
           {isDataLoading
             ? Array.from({ length: 5 }).map((_, i) => (
-                <SmTokenCardSkeleton key={i} />
-              ))
+              <SmTokenCardSkeleton key={i} />
+            ))
             : gainers.map(token => (
-                <SmTokenCard
-                  id={token.id}
-                  name={token.name}
-                  image={token.image}
-                  current_price={token.current_price}
-                  price_change_percentage_24h={
-                    token.price_change_percentage_24h
-                  }
-                  key={token.id}
-                />
-              ))}
+              <SmTokenCard
+                id={token.id}
+                name={token.name}
+                image={token.image}
+                current_price={token.current_price}
+                price_change_percentage_24h={
+                  token.price_change_percentage_24h
+                }
+                key={token.id}
+              />
+            ))}
         </Card>
       </section>
 

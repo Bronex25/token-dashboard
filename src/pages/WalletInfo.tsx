@@ -1,10 +1,10 @@
 import { ChartPieLabelList } from '@/components/PieChart';
-import { DataTable } from '@/components/ui/Tables/DataTable';
-import { tokenColumns } from '@/components/ui/Tables/tokenColumns';
+import { DataTable } from '@/components/shadcn_ui/Tables/DataTable';
+import { tokenColumns } from '@/components/shadcn_ui/Tables/tokenColumns';
 import {
   columns,
   type TransactionRow,
-} from '@/components/ui/Tables/transactionColumns';
+} from '@/components/shadcn_ui/Tables/transactionColumns';
 import { getAllTokens, getAllTransactions } from '@/lib/moralis';
 import { fetchWithCache } from '@/lib/utils';
 import type { Token } from '@/types/Token';
@@ -13,7 +13,7 @@ import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { useEffect, useState, useCallback } from 'react';
 import { useAccount } from 'wagmi';
 import ErrorPage from './ErrorPage';
-import { PieChartSkeleton } from '@/components/Skeletons/PieChartSkeleton';
+import { PieChartSkeleton } from '@/components/skeletons/PieChartSkeleton';
 
 const normalizeTx = (
   tx: EvmWalletHistoryTransaction | Record<string, unknown>,

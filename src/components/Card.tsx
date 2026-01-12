@@ -3,7 +3,7 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
+} from '@/components/shadcn_ui/card';
 
 type CardProps = {
   title?: string;

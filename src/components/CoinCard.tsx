@@ -1,6 +1,6 @@
 'use client';
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/shadcn_ui/card';
 import { LineChart, Line, ResponsiveContainer, YAxis } from 'recharts';
 import { TrendingIcon } from './TrendingIcon';
 import { formatToUsd } from '@/lib/utils';

@@ -1,4 +1,4 @@
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/shadcn_ui/button';
 import React from 'react';
 
 type Props = {

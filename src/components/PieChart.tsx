@@ -1,12 +1,17 @@
 'use client';
 import { LabelList, Pie, PieChart } from 'recharts';
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from '@/components/shadcn_ui/card';
 import {
   type ChartConfig,
   ChartContainer,
   ChartTooltip,
-} from '@/components/ui/chart';
+} from '@/components/shadcn_ui/chart';
 import { formatToUsd } from '@/lib/utils';
 
 export const description = 'A pie chart with a label list';

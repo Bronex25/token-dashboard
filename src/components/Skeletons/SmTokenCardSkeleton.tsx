@@ -1,4 +1,4 @@
-import { Skeleton } from '@/components/ui/skeleton';
+import { Skeleton } from '@/components/shadcn_ui/skeleton';
 
 export function SmTokenCardSkeleton() {
   return (

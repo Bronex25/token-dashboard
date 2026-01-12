@@ -6,7 +6,7 @@ import { config } from '../config.ts';
 import './index.css';
 import App from './App.tsx';
 import '@rainbow-me/rainbowkit/styles.css';
-import { ThemeProvider } from './components/ui/themeProvider.tsx';
+import { ThemeProvider } from './components/shadcn_ui/themeProvider.tsx';
 import { RainbowKitWrapper } from './components/RainbowKitProvider.tsx';
 import { BrowserRouter } from 'react-router-dom';
 import { TokensProvider } from './context/TokenContext.tsx';

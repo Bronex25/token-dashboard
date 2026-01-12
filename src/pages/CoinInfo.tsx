@@ -2,7 +2,7 @@ import { getMarketChart, getTokenById } from '@/lib/fetchCoinGecko';
 import type { TokenById } from '@/types/TokenById';
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { Skeleton } from '@/components/ui/skeleton';
+import { Skeleton } from '@/components/shadcn_ui/skeleton';
 import {
   LineChart,
   Line,
@@ -12,10 +12,10 @@ import {
   Tooltip,
   CartesianGrid,
 } from 'recharts';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/shadcn_ui/button';
 import { Card } from '@/components/Card';
 import { cn, formatToUsd } from '@/lib/utils';
-import { useTheme } from '@/components/ui/themeProvider';
+import { useTheme } from '@/components/shadcn_ui/themeProvider';
 import { TrendingIcon } from '@/components/TrendingIcon';
 import ErrorPage from './ErrorPage';
 

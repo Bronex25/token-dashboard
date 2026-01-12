@@ -3,7 +3,7 @@ import {
   darkTheme,
   lightTheme,
 } from '@rainbow-me/rainbowkit';
-import { useTheme } from './ui/themeProvider';
+import { useTheme } from './shadcn_ui/themeProvider';
 import type { ReactNode } from 'react';
 
 export function RainbowKitWrapper({ children }: { children: ReactNode }) {

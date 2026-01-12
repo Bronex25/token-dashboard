@@ -1,5 +1,5 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Skeleton } from '@/components/ui/skeleton';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/shadcn_ui/card';
+import { Skeleton } from '@/components/shadcn_ui/skeleton';
 
 export function PieChartSkeleton() {
   return (
