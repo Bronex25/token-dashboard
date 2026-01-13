@@ -17,10 +17,10 @@ export async function getNews(): Promise<NewsArticle[]> {
 
     const filteredArticles = data.results.filter(article => {
       if (seenTitles.has(article.title)) {
-        return false; // Duplicate title → exclude
+        return false;
       }
       seenTitles.add(article.title);
-      return true; // First occurrence → include
+      return true;
     });
     return filteredArticles;
   }
