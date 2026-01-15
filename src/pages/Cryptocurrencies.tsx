@@ -1,22 +1,23 @@
-import { CoinCard } from '@/components/CoinCard';
 import { Input } from '@/components/shadcn_ui/input';
-import { useTokens } from '@/context/TokenContext';
 import React, { useEffect, useMemo, useState } from 'react';
 import { debounce } from 'lodash';
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from '@/components/shadcn_ui/pagination';
-import { CoinCardSkeleton } from '@/components/skeletons/CoinCardSkeleton';
 import ErrorPage from './ErrorPage';
+import { useQuery } from '@tanstack/react-query';
+import { getTokens } from '@/lib/fetchCoinGecko';
+import PagePagination from '@/components/PagePagination';
+import TokenList from '@/components/TokenList';
 
 export const Cryptocurrencies: React.FC = () => {
-  const { tokens, isLoading, error } = useTokens();
+  const {
+    data: tokens,
+    isLoading: isTokensLoading,
+    error: tokensError,
+  } = useQuery({
+    queryKey: ['tokens'],
+    queryFn: () => getTokens(),
+    staleTime: 5 * 60 * 1000,
+  });
+
   const [typedQuery, setTypedQuery] = useState('');
   const [debouncedQuery, setDebouncedQuery] = useState('');
 
@@ -33,6 +34,7 @@ export const Cryptocurrencies: React.FC = () => {
   }, [typedQuery]);
 
   const queriedTokens = useMemo(() => {
+    if (!tokens) return [];
     if (!debouncedQuery) return tokens;
     return tokens.filter(
       token =>
@@ -50,39 +52,7 @@ export const Cryptocurrencies: React.FC = () => {
     return queriedTokens.slice(start, start + perPage);
   }, [queriedTokens, currentPage]);
 
-  const getPageNumbers = () => {
-    if (maxPages <= 4) {
-      // If 4 pages or less, show all pages
-      return Array.from({ length: maxPages }, (_, i) => i + 1);
-    }
-
-    const pages = [];
-
-    // Always show first 2 pages
-    pages.push(1, 2);
-
-    // Add ellipsis if current page is greater than 3
-    if (currentPage > 3) {
-      pages.push('ellipsis');
-    }
-
-    // Add current page if it's not first, second, or last
-    if (currentPage > 2 && currentPage < maxPages - 1) {
-      pages.push(currentPage);
-    }
-
-    // Add ellipsis if current page is less than maxPages - 2
-    if (currentPage < maxPages - 2) {
-      pages.push('ellipsis');
-    }
-
-    // Always show last page
-    pages.push(maxPages);
-
-    return pages;
-  };
-
-  if (error) return <ErrorPage error={error} />;
+  if (tokensError) return <ErrorPage error={tokensError} />;
 
   return (
     <div className="container m-h-full mx-auto px-4 py-8 flex flex-col gap-10 items-center min-w-full">
@@ -93,59 +63,19 @@ export const Cryptocurrencies: React.FC = () => {
         onChange={e => setTypedQuery(e.target.value)}
         className="w-full lg:w-[60%] h-9"
       ></Input>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 min-w-full">
-        {isLoading ? (
-          Array.from({ length: perPage }).map((_, i) => (
-            <CoinCardSkeleton key={i} />
-          ))
-        ) : paginatedTokens.length ? (
-          paginatedTokens.map(token => <CoinCard key={token.id} coin={token} />)
-        ) : (
-          <p className="text-gray-500 text-center col-span-full">
-            No tokens match your search.
-          </p>
-        )}
-      </div>
+
+      <TokenList
+        isTokensLoading={isTokensLoading}
+        perPage={perPage}
+        tokens={paginatedTokens}
+      />
 
       {maxPages > 1 && (
-        <Pagination>
-          <PaginationContent>
-            <PaginationItem>
-              <PaginationPrevious
-                onClick={() => setCurrentPage(prev => prev - 1)}
-                className={
-                  currentPage === 1 ? 'opacity-50 pointer-events-none' : ''
-                }
-              />
-            </PaginationItem>
-
-            {getPageNumbers().map((page, index) => (
-              <PaginationItem key={index}>
-                {page === 'ellipsis' ? (
-                  <PaginationEllipsis />
-                ) : (
-                  <PaginationLink
-                    onClick={() => setCurrentPage(page as number)}
-                    isActive={currentPage === page}
-                  >
-                    {page}
-                  </PaginationLink>
-                )}
-              </PaginationItem>
-            ))}
-
-            <PaginationItem>
-              <PaginationNext
-                onClick={() => setCurrentPage(prev => prev + 1)}
-                className={
-                  currentPage === maxPages
-                    ? 'opacity-50 pointer-events-none'
-                    : ''
-                }
-              />
-            </PaginationItem>
-          </PaginationContent>
-        </Pagination>
+        <PagePagination
+          maxPages={maxPages}
+          currentPage={currentPage}
+          setCurrentPage={(page: number) => setCurrentPage(page)}
+        />
       )}
     </div>
   );
