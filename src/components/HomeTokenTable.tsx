@@ -47,55 +47,60 @@ export function HomeTokensTable<TData, TValue>({
   });
 
   return (
-    <div className="rounded-md border-1 border-gray-200 shadow-sm">
-      <Table>
-        <TableHeader>
-          {table.getHeaderGroups().map(headerGroup => (
-            <TableRow key={headerGroup.id}>
-              {headerGroup.headers.map(header => {
-                return (
-                  <TableHead key={header.id}>
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext(),
+    <section className="w-full">
+      <h1 className="text-2xl font-medium mb-10 text-center">
+        Top 10 Cryptocurrencies{' '}
+      </h1>
+      <div className="rounded-md border-1 border-gray-200 shadow-sm">
+        <Table>
+          <TableHeader>
+            {table.getHeaderGroups().map(headerGroup => (
+              <TableRow key={headerGroup.id}>
+                {headerGroup.headers.map(header => {
+                  return (
+                    <TableHead key={header.id}>
+                      {header.isPlaceholder
+                        ? null
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext(),
+                          )}
+                    </TableHead>
+                  );
+                })}
+              </TableRow>
+            ))}
+          </TableHeader>
+          <TableBody>
+            {isLoading
+              ? Array.from({ length: 10 }).map((_, i) => (
+                  <TableRow key={i}>
+                    {columns.map((_, ci) => (
+                      <TableCell key={ci}>
+                        <Skeleton className="h-4 w-[70%]" />
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))
+              : table.getRowModel().rows.map(row => (
+                  <TableRow
+                    key={row.id}
+                    data-state={row.getIsSelected() && 'selected'}
+                    className="hover:bg-gray-100 dark:hover:bg-blue-800"
+                  >
+                    {row.getVisibleCells().map(cell => (
+                      <TableCell key={cell.id}>
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext(),
                         )}
-                  </TableHead>
-                );
-              })}
-            </TableRow>
-          ))}
-        </TableHeader>
-        <TableBody>
-          {isLoading
-            ? Array.from({ length: 10 }).map((_, i) => (
-                <TableRow key={i}>
-                  {columns.map((_, ci) => (
-                    <TableCell key={ci}>
-                      <Skeleton className="h-4 w-[70%]" />
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))
-            : table.getRowModel().rows.map(row => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && 'selected'}
-                  className="hover:bg-gray-100 dark:hover:bg-blue-800"
-                >
-                  {row.getVisibleCells().map(cell => (
-                    <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext(),
-                      )}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))}
-        </TableBody>
-      </Table>
-    </div>
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))}
+          </TableBody>
+        </Table>
+      </div>
+    </section>
   );
 }

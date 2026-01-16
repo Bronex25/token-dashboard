@@ -1,6 +1,5 @@
 import { Card } from '@/components/Card';
 import { HomeTokensTable } from '@/components/HomeTokenTable';
-import { NewsCard } from '@/components/NewsCard';
 import { SkeletonCard } from '@/components/skeletons/SkeletonCard';
 import { SmTokenCard } from '@/components/SmTokenCard';
 import { TrendingIcon } from '@/components/TrendingIcon';
@@ -9,9 +8,9 @@ import { useMemo } from 'react';
 import { formatToUsd } from '@/lib/utils';
 import { SmTokenCardSkeleton } from '@/components/skeletons/SmTokenCardSkeleton';
 import { Skeleton } from '@/components/shadcn_ui/skeleton';
-import { NewsCardSkeleton } from '@/components/skeletons/NewsCardSkeleton';
 import ErrorPage from './ErrorPage';
 import { useHomeData } from '@/hooks/useHomeData';
+import NewsTable from '@/components/NewsTable';
 
 export const Home: React.FC = () => {
   const { tokens, news, global, trending } = useHomeData();
@@ -159,46 +158,13 @@ export const Home: React.FC = () => {
         </Card>
       </section>
 
-      <section className="w-full">
-        <h1 className="text-2xl font-medium mb-10 text-center">
-          Top 10 Cryptocurrencies{' '}
-        </h1>
-        <HomeTokensTable
-          data={topTenTokens}
-          columns={tokenColumns}
-          isLoading={tokens.isLoading}
-        ></HomeTokensTable>
-      </section>
+      <HomeTokensTable
+        data={topTenTokens}
+        columns={tokenColumns}
+        isLoading={tokens.isLoading}
+      ></HomeTokensTable>
 
-      <section className="w-full">
-        <h1 className="text-2xl font-medium mb-10 text-center">
-          Last Crypto News
-        </h1>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 ">
-          {news.isLoading || !news.data ? (
-            Array.from({ length: 6 }).map((_, i) => (
-              <NewsCardSkeleton key={i} />
-            ))
-          ) : news.data.length > 0 ? (
-            news.data.map(article => (
-              <NewsCard
-                title={article.title}
-                key={article.article_id}
-                author={
-                  article.creator && article.creator.length > 0
-                    ? article.creator[0]
-                    : 'Unknown'
-                }
-                imageUrl={article.image_url}
-                publishedAt={article.pubDate}
-                url={article.link}
-              />
-            ))
-          ) : (
-            <p>There are no news at the moment</p>
-          )}
-        </div>
-      </section>
+      <NewsTable news={news.data} isLoading={news.isLoading}></NewsTable>
     </>
   );
 };
