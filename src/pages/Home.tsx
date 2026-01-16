@@ -42,7 +42,7 @@ export const Home: React.FC = () => {
   return (
     <>
       <div className="flex flex-col items-center gap-4">
-        <h1 className="text-2xl font-semibold md:text-4xl text-center mt-6">
+        <h1 className="text-2xl font-semibold md:text-4xl text-center">
           Cryptocurrency Market Overview
         </h1>
         {global.isLoading || !global.data ? (

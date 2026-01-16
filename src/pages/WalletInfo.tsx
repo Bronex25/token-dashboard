@@ -1,68 +1,16 @@
 import { ChartPieLabelList } from '@/components/wallet_page/PieChart';
 import { DataTable } from '@/components/shadcn_ui/Tables/DataTable';
 import { tokenColumns } from '@/components/shadcn_ui/Tables/tokenColumns';
-import {
-  columns,
-  type TransactionRow,
-} from '@/components/shadcn_ui/Tables/transactionColumns';
-import { getAllTokens, getAllTransactions } from '@/lib/moralis';
-import { fetchWithCache } from '@/utils/classNameMerger';
-import type { Token } from '@/types/Token';
-import type { EvmWalletHistoryTransaction } from '@moralisweb3/common-evm-utils';
+import { columns } from '@/components/shadcn_ui/Tables/transactionColumns';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
-import { useEffect, useState, useCallback } from 'react';
 import { useAccount } from 'wagmi';
 import ErrorPage from './ErrorPage';
 import { PieChartSkeleton } from '@/components/skeletons/PieChartSkeleton';
-
-const normalizeTx = (
-  tx: EvmWalletHistoryTransaction | Record<string, unknown>,
-): TransactionRow => {
-  const anyTx = tx as Record<string, unknown>;
-
-  const extractAddress = (value: unknown): string => {
-    if (!value) return '';
-    if (typeof value === 'string') return value;
-    if (typeof value === 'object') {
-      const obj = value as {
-        lowercase?: string;
-        address?: string;
-        checksum?: string;
-        value?: string;
-      };
-      return obj.lowercase || obj.address || obj.checksum || obj.value || '';
-    }
-    return '';
-  };
-
-  const rawFrom = anyTx.fromAddress ?? anyTx.from ?? anyTx.from_address ?? null;
-  const rawTo = anyTx.toAddress ?? anyTx.to ?? anyTx.to_address ?? null;
-
-  const blockTimestamp =
-    (anyTx.blockTimestamp as string | number | Date | null | undefined) ??
-    (anyTx.block_timestamp as string | number | Date | null | undefined) ??
-    (anyTx as { blockTimestamp?: { iso?: string } }).blockTimestamp?.iso ??
-    null;
-
-  return {
-    hash: (anyTx.hash as string) || (anyTx.transactionHash as string) || '',
-    fromAddress: extractAddress(rawFrom),
-    toAddress: extractAddress(rawTo),
-    fromAddressEntityLogo: (anyTx.fromAddressEntityLogo as string) ?? null,
-    toAddressEntityLogo: (anyTx.toAddressEntityLogo as string) ?? null,
-    summary: (anyTx.summary as string) || '',
-    blockTimestamp,
-  };
-};
+import { useWalletTokens, useWalletTransactions } from '@/hooks/useWalletData';
+import { useMemo } from 'react';
 
 export const WalletInfo: React.FC = () => {
-  const account = useAccount();
-  const { isConnected } = account;
-
-  const [tokens, setTokens] = useState<Token[]>([]);
-  const [transactions, setTransactions] = useState<TransactionRow[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const { address, isConnected } = useAccount();
 
   const pieColors = [
     '#8884d8',
@@ -77,54 +25,41 @@ export const WalletInfo: React.FC = () => {
     '#f08080',
   ];
 
-  const fetchTokensTxs = useCallback(async () => {
-    if (!account.address) return;
+  const {
+    data: tokens = [],
+    isLoading: tokensLoading,
+    error: tokensError,
+  } = useWalletTokens(address);
 
-    setIsLoading(true);
-    setError(null);
+  const {
+    data: transactions = [],
+    isLoading: txLoading,
+    error: txError,
+  } = useWalletTransactions(address);
 
-    try {
-      const [tokens, transactions] = await Promise.all([
-        fetchWithCache('tokens', () => getAllTokens(account.address!)),
-        fetchWithCache('transactions', () =>
-          getAllTransactions(account.address!),
-        ),
-      ]);
+  const sortedTokens = useMemo(
+    () => [...tokens].sort((a, b) => +b.usdValue - +a.usdValue),
+    [tokens],
+  );
 
-      setTokens(tokens);
-      setTransactions(
-        (transactions as unknown[]).map(t =>
-          normalizeTx(t as Record<string, unknown>),
-        ),
-      );
-    } catch (err) {
-      console.error('Unable to fetch wallet data', err);
-      setError('Failed to load wallet data. Please try again later.');
-    } finally {
-      setIsLoading(false);
-    }
-  }, [account.address]);
-
-  useEffect(() => {
-    fetchTokensTxs();
-  }, [fetchTokensTxs]);
-
-  const sortedTokens = [...tokens].sort((a, b) => +b.usdValue - +a.usdValue);
   const topTokens = sortedTokens.slice(0, 4);
   const othersValue = sortedTokens
     .slice(4)
     .reduce((acc, t) => acc + +t.usdValue, 0);
 
-  const dataForPieChart = [
-    ...topTokens.map((token, idx) => ({
-      name: token.symbol,
-      value: +token.usdValue,
-      fill: pieColors[idx % pieColors.length],
-    })),
-    ...(othersValue > 0
-      ? [{ name: 'Others', value: othersValue, fill: pieColors[4] }]
-      : []),
-  ];
+  const dataForPieChart = useMemo(
+    () => [
+      ...topTokens.map((token, idx) => ({
+        name: token.symbol,
+        value: +token.usdValue,
+        fill: pieColors[idx % pieColors.length],
+      })),
+      ...(othersValue > 0
+        ? [{ name: 'Others', value: othersValue, fill: pieColors[4] }]
+        : []),
+    ],
+    [topTokens, othersValue],
+  );
 
   if (!isConnected) {
     return (
@@ -137,8 +72,10 @@ export const WalletInfo: React.FC = () => {
     );
   }
 
-  if (error) {
-    return <ErrorPage error={error} />;
+  if (tokensError || txError) {
+    return (
+      <ErrorPage error="Failed to load wallet data. Please try again later." />
+    );
   }
 
   return (
@@ -153,13 +90,13 @@ export const WalletInfo: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full">
           <section>
             <h2 className="text-2xl font-bold mb-4">Wallet Overview</h2>
-            {isLoading && <PieChartSkeleton />}
+            {tokensLoading && <PieChartSkeleton />}
 
-            {!isLoading && tokens.length > 0 && (
+            {!tokensLoading && tokens.length > 0 && (
               <ChartPieLabelList data={dataForPieChart} />
             )}
 
-            {!isLoading && tokens.length === 0 && (
+            {!tokensLoading && tokens.length === 0 && (
               <p className="text-gray-500">No tokens found in this wallet.</p>
             )}
           </section>
@@ -168,7 +105,7 @@ export const WalletInfo: React.FC = () => {
             <h2 className="text-2xl font-bold mb-4">Token Balances</h2>
             <DataTable
               columns={tokenColumns}
-              isLoading={isLoading}
+              isLoading={tokensLoading}
               data={tokens.map(t => ({
                 symbol: t.symbol,
                 balance: t.balanceFormatted,
@@ -185,7 +122,7 @@ export const WalletInfo: React.FC = () => {
           <DataTable
             columns={columns}
             data={transactions}
-            isLoading={isLoading}
+            isLoading={txLoading}
           />
         </section>
       </section>

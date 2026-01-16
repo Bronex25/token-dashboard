@@ -9,9 +9,11 @@ export const Header: React.FC = () => {
         <img
           src="./logo.png"
           alt="Logo"
+          width={32}
+          height={32}
           className="h-8 w-auto object-contain"
         />
-        <h1 className="text-lg font-semibold tracking-tight bg-gradient-to-r from-blue-600 to-emerald-500 bg-clip-text text-transparent">
+        <h1 className="text-lg font-semibold tracking-tight bg-gradient-to-r from-blue-600 to-emerald-500 bg-clip-text text-transparent hidden sm:block">
           CoinAtlas
         </h1>
       </Link>
