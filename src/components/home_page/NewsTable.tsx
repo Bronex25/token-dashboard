@@ -1,5 +1,5 @@
-import { NewsCardSkeleton } from './skeletons/NewsCardSkeleton';
-import { NewsCard } from './NewsCard';
+import { NewsCardSkeleton } from '../skeletons/NewsCardSkeleton';
+import { NewsCard } from '../shared/NewsCard';
 import type { NewsArticle } from '@/types/NewsArticle';
 
 type Props = {

@@ -1,7 +1,7 @@
 import React from 'react';
 import type { TokenById } from '@/types/TokenById';
-import { formatToUsd } from '@/lib/utils';
-import { TrendingIcon } from '@/components/TrendingIcon';
+import { TrendingIcon } from '@/components/shared/TrendingIcon';
+import { formatToUsd } from '@/utils/usdFormatter';
 
 type CoinHeaderProps = {
   token: TokenById;

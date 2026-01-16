@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { TrendingIcon } from './TrendingIcon';
-import { formatToUsd } from '@/lib/utils';
+import { formatToUsd } from '@/utils/usdFormatter';
 
 type Props = {
   id: string;

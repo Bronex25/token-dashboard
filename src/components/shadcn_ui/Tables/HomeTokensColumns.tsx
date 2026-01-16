@@ -7,11 +7,11 @@ import type {
 } from '@tanstack/react-table';
 import { Button } from '../button';
 import { ArrowDown, ArrowUp, ArrowUpDown } from 'lucide-react';
-import { formatToUsd } from '@/lib/utils';
 import type { TokenCoinGecko } from '@/types/TokenCoinGecko';
-import { TrendingIcon } from '@/components/TrendingIcon';
+import { TrendingIcon } from '@/components/shared/TrendingIcon';
 import { Line, LineChart, ResponsiveContainer, YAxis } from 'recharts';
 import { Link } from 'react-router-dom';
+import { formatToUsd } from '@/utils/usdFormatter';
 
 const headerWithSort = (label: string) => {
   return (context: HeaderContext<TokenCoinGecko, unknown>) => {

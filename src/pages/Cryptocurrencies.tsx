@@ -4,8 +4,8 @@ import { debounce } from 'lodash';
 import ErrorPage from './ErrorPage';
 import { useQuery } from '@tanstack/react-query';
 import { getTokens } from '@/lib/fetchCoinGecko';
-import PagePagination from '@/components/PagePagination';
-import TokenList from '@/components/TokenList';
+import PagePagination from '@/components/shared/PagePagination';
+import TokenList from '@/components/cryptocurrencies_page/TokenList';
 
 export const Cryptocurrencies: React.FC = () => {
   const {

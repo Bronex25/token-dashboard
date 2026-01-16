@@ -1,5 +1,3 @@
-'use client';
-
 import {
   type ColumnDef,
   flexRender,
@@ -19,7 +17,7 @@ import {
   TableRow,
 } from '@/components/shadcn_ui/Tables/table';
 import { useState } from 'react';
-import { Skeleton } from './shadcn_ui/skeleton';
+import { Skeleton } from '../shadcn_ui/skeleton';
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];

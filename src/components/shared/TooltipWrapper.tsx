@@ -6,7 +6,7 @@ import {
   Portal,
   Provider as TooltipProviderPrimitive,
 } from '@radix-ui/react-tooltip';
-import { cn } from '@/lib/utils';
+import { cn } from '@/utils/classNameMerger';
 
 type TooltipWrapperProps = {
   content: React.ReactNode;

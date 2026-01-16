@@ -6,7 +6,7 @@ import {
   PaginationEllipsis,
   PaginationLink,
   PaginationNext,
-} from './shadcn_ui/pagination';
+} from '../shadcn_ui/pagination';
 
 type Props = {
   maxPages: number;

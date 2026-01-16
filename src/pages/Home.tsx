@@ -1,16 +1,16 @@
-import { Card } from '@/components/Card';
-import { HomeTokensTable } from '@/components/HomeTokenTable';
+import { Card } from '@/components/shared/Card';
+import { HomeTokensTable } from '@/components/home_page/HomeTokenTable';
 import { SkeletonCard } from '@/components/skeletons/SkeletonCard';
-import { SmTokenCard } from '@/components/SmTokenCard';
-import { TrendingIcon } from '@/components/TrendingIcon';
+import { SmTokenCard } from '@/components/shared/SmTokenCard';
+import { TrendingIcon } from '@/components/shared/TrendingIcon';
 import { tokenColumns } from '@/components/shadcn_ui/Tables/HomeTokensColumns';
 import { useMemo } from 'react';
-import { formatToUsd } from '@/lib/utils';
 import { SmTokenCardSkeleton } from '@/components/skeletons/SmTokenCardSkeleton';
 import { Skeleton } from '@/components/shadcn_ui/skeleton';
 import ErrorPage from './ErrorPage';
 import { useHomeData } from '@/hooks/useHomeData';
-import NewsTable from '@/components/NewsTable';
+import NewsTable from '@/components/home_page/NewsTable';
+import { formatToUsd } from '@/utils/usdFormatter';
 
 export const Home: React.FC = () => {
   const { tokens, news, global, trending } = useHomeData();

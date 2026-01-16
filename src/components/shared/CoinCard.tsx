@@ -8,9 +8,9 @@ import {
 } from '@/components/shadcn_ui/card';
 import { LineChart, Line, ResponsiveContainer, YAxis } from 'recharts';
 import { TrendingIcon } from './TrendingIcon';
-import { formatToUsd } from '@/lib/utils';
 import { TooltipWrapper } from './TooltipWrapper';
 import { Link } from 'react-router-dom';
+import { formatToUsd } from '@/utils/usdFormatter';
 
 type CoinCardProps = {
   coin: {

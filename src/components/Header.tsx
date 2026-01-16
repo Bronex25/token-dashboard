@@ -8,7 +8,7 @@ export const Header: React.FC = () => {
       <Link to="/" className="flex items-center select-none">
         <img
           src="./logo.png"
-          alt="CoinAtlas logo"
+          alt="Logo"
           className="h-8 w-auto object-contain"
         />
         <h1 className="text-lg font-semibold tracking-tight bg-gradient-to-r from-blue-600 to-emerald-500 bg-clip-text text-transparent">

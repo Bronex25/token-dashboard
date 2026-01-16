@@ -1,8 +1,9 @@
 import React from 'react';
 import type { TokenById } from '@/types/TokenById';
-import { Card } from '@/components/Card';
-import { cn, formatToUsd } from '@/lib/utils';
+import { Card } from '@/components/shared/Card';
 import { formatPercentage } from '@/utils/percentageFormatter';
+import { formatToUsd } from '@/utils/usdFormatter';
+import { cn } from '@/utils/classNameMerger';
 
 type MarketInfoProps = {
   token: TokenById;

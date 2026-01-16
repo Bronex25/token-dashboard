@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useMarketChart } from '@/hooks/useMarketChart';
-import { CoinHeader } from '@/components/coin-info/CoinHeader';
-import { CoinChart } from '@/components/coin-info/CoinChart';
-import { MarketInfo } from '@/components/coin-info/MarketInfo';
-import { CoinDescription } from '@/components/coin-info/CoinDescription';
-import { CoinInfoSkeleton } from '@/components/coin-info/CoinInfoSkeleton';
+import { CoinHeader } from '@/components/coin-info_page/CoinHeader';
+import { CoinChart } from '@/components/coin-info_page/CoinChart';
+import { MarketInfo } from '@/components/coin-info_page/MarketInfo';
+import { CoinDescription } from '@/components/coin-info_page/CoinDescription';
+import { CoinInfoSkeleton } from '@/components/skeletons/CoinInfoSkeleton';
 import ErrorPage from './ErrorPage';
 import type { Range } from '@/utils/dateFormatter';
 import { useQuery } from '@tanstack/react-query';

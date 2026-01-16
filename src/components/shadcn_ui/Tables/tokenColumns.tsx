@@ -7,7 +7,8 @@ import type {
 } from '@tanstack/react-table';
 import { Button } from '../button';
 import { ArrowDown, ArrowUp, ArrowUpDown } from 'lucide-react';
-import { formatTokenBalance, formatToUsd } from '@/lib/utils';
+import { formatToUsd } from '@/utils/usdFormatter';
+import { formatTokenBalance } from '@/utils/tokenBalanceFormatter';
 
 export type TokenData = {
   symbol: string;

@@ -9,10 +9,11 @@ import {
   CartesianGrid,
 } from 'recharts';
 import { Button } from '@/components/shadcn_ui/button';
-import { Card } from '@/components/Card';
-import { cn, formatToUsd } from '@/lib/utils';
+import { Card } from '@/components/shared/Card';
 import { useTheme } from '@/components/shadcn_ui/themeProvider';
 import type { Range } from '@/utils/dateFormatter';
+import { cn } from '@/utils/classNameMerger';
+import { formatToUsd } from '@/utils/usdFormatter';
 
 type ChartDataPoint = {
   time: string;

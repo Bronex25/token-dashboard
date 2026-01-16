@@ -1,6 +1,5 @@
-'use client';
+import { CopyButton } from '@/components/shared/CopyButton';
 
-import { CopyButton } from '@/components/CopyButton';
 export type TransactionRow = {
   hash: string;
   fromAddress?: string;
@@ -127,20 +126,20 @@ export const columns: ColumnDef<TransactionRow>[] = [
             ? ts.toISOString()
             : ts && typeof ts === 'object'
               ? // handle Moralis/date-like objects restored from JSON
-              (ts as { iso?: string; $date?: string | number } | null)?.iso ||
-              (ts as { $date?: string | number } | null)?.$date ||
-              ''
+                (ts as { iso?: string; $date?: string | number } | null)?.iso ||
+                (ts as { $date?: string | number } | null)?.$date ||
+                ''
               : '';
       const date = dateString ? new Date(dateString) : new Date(NaN);
       const formatted = isNaN(date.getTime())
         ? '-'
         : date.toLocaleString(undefined, {
-          year: 'numeric',
-          month: 'short',
-          day: '2-digit',
-          hour: '2-digit',
-          minute: '2-digit',
-        });
+            year: 'numeric',
+            month: 'short',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+          });
       return <p className="whitespace-nowrap text-sm">{formatted}</p>;
     },
   },

@@ -1,4 +1,4 @@
-import { ChartPieLabelList } from '@/components/PieChart';
+import { ChartPieLabelList } from '@/components/wallet_page/PieChart';
 import { DataTable } from '@/components/shadcn_ui/Tables/DataTable';
 import { tokenColumns } from '@/components/shadcn_ui/Tables/tokenColumns';
 import {
@@ -6,7 +6,7 @@ import {
   type TransactionRow,
 } from '@/components/shadcn_ui/Tables/transactionColumns';
 import { getAllTokens, getAllTransactions } from '@/lib/moralis';
-import { fetchWithCache } from '@/lib/utils';
+import { fetchWithCache } from '@/utils/classNameMerger';
 import type { Token } from '@/types/Token';
 import type { EvmWalletHistoryTransaction } from '@moralisweb3/common-evm-utils';
 import { ConnectButton } from '@rainbow-me/rainbowkit';

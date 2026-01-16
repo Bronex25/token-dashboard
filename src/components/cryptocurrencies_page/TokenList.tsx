@@ -1,5 +1,5 @@
-import { CoinCardSkeleton } from './skeletons/CoinCardSkeleton';
-import { CoinCard } from './CoinCard';
+import { CoinCardSkeleton } from '../skeletons/CoinCardSkeleton';
+import { CoinCard } from '../shared/CoinCard';
 import type { TokenCoinGecko } from '@/types/TokenCoinGecko';
 
 type Props = {

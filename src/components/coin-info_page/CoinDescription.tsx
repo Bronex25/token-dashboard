@@ -1,6 +1,6 @@
 import React from 'react';
 import type { TokenById } from '@/types/TokenById';
-import { Card } from '@/components/Card';
+import { Card } from '@/components/shared/Card';
 
 type CoinDescriptionProps = {
   token: TokenById;

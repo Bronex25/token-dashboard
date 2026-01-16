@@ -1,4 +1,3 @@
-'use client';
 import { LabelList, Pie, PieChart } from 'recharts';
 
 import {
@@ -12,7 +11,7 @@ import {
   ChartContainer,
   ChartTooltip,
 } from '@/components/shadcn_ui/chart';
-import { formatToUsd } from '@/lib/utils';
+import { formatToUsd } from '@/utils/usdFormatter';
 
 export const description = 'A pie chart with a label list';
 
